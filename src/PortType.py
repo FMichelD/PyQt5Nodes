@@ -3,16 +3,11 @@
 
 from enum import Enum
 
-#from PyQt5.QtWidgets import *
-#from PyQt5.QtCore import *
-
 #-----------------------------------------------------------------------------
 class PortType(Enum):
-    
-    No_One = 1
-    In = 2    
-    Out = 3
-    INVALID = -1
+    No_One = 0
+    In = 1
+    Out = 2
 
 #-----------------------------------------------------------------------------
 PortIndex = int
@@ -31,12 +26,10 @@ class Port(object):
 
     #--------------------------------------------------------------------------
     def indexIsValid(self) -> bool:
-
         return (self.index != INVALID)
 
     #--------------------------------------------------------------------------
     def portTypeIsValid(self) -> bool:
-
         return (self.type != PortType.No_One)
 
 
@@ -46,11 +39,9 @@ def oppositePort(port: PortType) -> PortType:
     result = PortType.No_One
 
     if(port == PortType.In):
-
         result = PortType.Out
 
     elif(port == PortType.Out):
-
         result = PortType.In
 
     return result
