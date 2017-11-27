@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python3
 
-#from typing import *
+import logging
 
 #from PyQt5.QtWidgets import *
 from PyQt5.QtCore import QObject
@@ -37,12 +37,14 @@ class Node(QObject, Serializable):
         self._nodeGraphicsObject = None
 
         self._nodeDataModel.dataUpdated.connect(self.onDataUpdated)
+        
+        self.nodeDataModel().setCaption(self.id().toString())
 
 #-----------------------------------------------------------------------------
     @pyqtSlot()
     def propagateData(self, nodeData: NodeData, inPortIndex: PortIndex):
         
-#        self._nodeDataModel.setInData(nodeData, inPortIndex)
+        self._nodeDataModel.setInData(nodeData, inPortIndex)
 
         # Recalculate the nodes visuals. A data change can result
         #    in the node taking more space than before, so this forces a recalculate+repaint on the affected node
@@ -114,10 +116,11 @@ class Node(QObject, Serializable):
 
         self._nodeGeometry.setDraggingPosition(p)
 
+
         self._nodeState.setReaction(ReactToConnectionState.REACTING,
                                                     reactingPortType,
                                                     reactingDataType)
-
+        logging.debug("nodeState IsReacting?: {}".format(self._nodeState.isReacting()))
 #-----------------------------------------------------------------------------
     def resetReactionToConnection(self):
         self._nodeState.setReaction(ReactToConnectionState.NOT_REACTING)

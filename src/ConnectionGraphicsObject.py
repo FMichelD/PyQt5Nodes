@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python3
 
+import logging
+
 import sys
 import inspect
 
@@ -75,15 +77,15 @@ class ConnectionGraphicsObject(QGraphicsObject):
 
     #----------------------------------------------------ConnectionGraphicsObject.py---------------------
     def setGeometryChanged(self):
-
         self.prepareGeometryChange()
 
     #-------------------------------------------------------------------------
     def move(self):
         def moveEndPoint(portType):
+            
             node = self._connection.getNode(portType)
 
-            if(not node is None):
+            if(node):
 
                 nodeGraphics = node.nodeGraphicsObject()
 
@@ -100,7 +102,7 @@ class ConnectionGraphicsObject(QGraphicsObject):
                                                                 connectionPos)
 
                 self._connection.getConnectionGraphicsObject().setGeometryChanged()
-
+                
                 self._connection.getConnectionGraphicsObject().update()
 
         moveEndPoint(PortType.In)
@@ -119,7 +121,9 @@ class ConnectionGraphicsObject(QGraphicsObject):
 
     #-------------------------------------------------------------------------
     def mouseMoveEvent(self, event):
-        self.prepareGeometryChange()        
+        
+        self.prepareGeometryChange()     
+        
         view = QGraphicsView(event.widget())
 
         node = self._scene.locateNodeAt(event.scenePos(), self._scene, view.transform())
@@ -129,19 +133,26 @@ class ConnectionGraphicsObject(QGraphicsObject):
         state.interactWithNode(node)
 
         if(node):
-#            print("nodeId: ", node.id())
+            logging.debug("Node: {}".format(node.id()))
             node.reactToPossibleConnection(state.requiredPort(), 
                                             self._connection.dataType(),
                                             event.scenePos())
 
+#            print("NodeID: {}, {}".format(node.id(), node.nodeState().isReacting()))
+            
         offset = event.pos() - event.lastPos()
 
         requiredPort = self._connection.requiredPort()
 
-        if not(requiredPort is PortType.No_One):
+        if (requiredPort is not PortType.No_One):
 
             self._connection.connectionGeometry().moveEndPoint(requiredPort, offset)
 
+
+        logging.debug("CGO.py verificar ln: 153")
+        if(node):
+            node.nodeGraphicsObject().update()
+        
         self.update()
 
         event.accept()

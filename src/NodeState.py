@@ -28,10 +28,10 @@ class NodeState(object):
 
 
     def __init__(self, model: NodeDataModel):
-        curframe = inspect.currentframe()
-        calframe = inspect.getouterframes(curframe, 2)
-        print('NodeState.py: __init__(...)')
-        print('caller name: {} {}'.format(calframe[1][3], calframe[1][1]))
+#        curframe = inspect.currentframe()
+#        calframe = inspect.getouterframes(curframe, 2)
+#        print('NodeState.py: __init__(...)')
+#        print('caller name: {} {}'.format(calframe[1][3], calframe[1][1]))
 
         self._outConnections = [dict()] * model.nPorts(PortType.Out)
 
@@ -74,15 +74,15 @@ class NodeState(object):
 #        print('on:', calframe[1][1])
 #        print('')
         
-        cgo = self.getEntries(portType)[portIndex].get(id).getConnectionGraphicsObject()
-        conn = self.getEntries(portType)[portIndex].get(id)
+#        cgo = self.getEntries(portType)[portIndex].get(id).getConnectionGraphicsObject()
+#        conn = self.getEntries(portType)[portIndex].get(id)
         self.getEntries(portType)[portIndex].pop(id)
         
-        cgo.__del__()
+#        cgo.__del__()
 #        conn.connectionGeometry().__del__()
-        conn.__del__()
-        cgo = None
-        conn = None
+#        conn.__del__()
+#        cgo = None
+#        conn = None
     #-----------------------------------------------------------------------------
     def reaction(self):
         return self._reaction

@@ -57,10 +57,10 @@ class NodeGraphicsObject(QGraphicsObject):
     
     #-------------------------------------------------------------------------
     def __del__(self):
-        curframe = inspect.currentframe()
-        calframe = inspect.getouterframes(curframe, 2)
-        print('caller name:', calframe[1][3])
-        print('on:', calframe[1][1])
+#        curframe = inspect.currentframe()
+#        calframe = inspect.getouterframes(curframe, 2)
+#        print('caller name:', calframe[1][3])
+#        print('on:', calframe[1][1])
         
         self._scene.removeItem(self)
 
@@ -112,19 +112,19 @@ class NodeGraphicsObject(QGraphicsObject):
         nodeState = self._node.nodeState()
 #        #print(self._node.nodeState()._outConnections)
 
-        def moveConnection(portType):
+        def moveConnection(portType,  node):
 
             connectionsEntries = nodeState.getEntries(portType)
             
             #check for any connectionsEntrie empty 
-            if(any(d for d in connectionsEntries)):
-                for connections in connectionsEntries:
-#                    #print(type(connections))
-                    for id, con in connections.items():                         
+            if(any(d for d in connectionsEntries)):  
+                connections = [d for d in connectionsEntries if(d)]
+                for connection in connections:
+                    for id, con in connection.items():                         
                          con.getConnectionGraphicsObject().move()
 
-        moveConnection(PortType.In)
-        moveConnection(PortType.Out)
+        moveConnection(PortType.In,  self._node)
+        moveConnection(PortType.Out,  self._node)
 
     #-------------------------------------------------------------------------
     def lock(self,  locked: bool):
@@ -138,10 +138,10 @@ class NodeGraphicsObject(QGraphicsObject):
     def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, 
                 widget: QWidget):
                     
-        curframe = inspect.currentframe()
-        calframe = inspect.getouterframes(curframe, 2)
-        print('\nNodeGraphicsObject.py: paint(...)')
-        print('caller name: {} {}'.format(calframe[1][3], calframe[1][1]))
+#        curframe = inspect.currentframe()
+#        calframe = inspect.getouterframes(curframe, 2)
+#        print('\nNodeGraphicsObject.py: paint(...)')
+#        print('caller name: {} {}'.format(calframe[1][3], calframe[1][1]))
         
         painter.setClipRect(option.exposedRect)
 
@@ -286,7 +286,7 @@ class NodeGraphicsObject(QGraphicsObject):
 
     #-------------------------------------------------------------------------
     def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent):
-    
+        
         # bring all the colliding nodes to background
         overlapItems = self.collidingItems();
         
@@ -298,13 +298,15 @@ class NodeGraphicsObject(QGraphicsObject):
         self.setZValue(1.0)
         
         self._node.nodeGeometry().setHovered(True)
+        
         self.update()
+        
         self._scene.nodeHovered.emit(self.node(),  event.screenPos())
         event.accept()
 
     #-------------------------------------------------------------------------
     def hoverLeaveEvent(self, event: QGraphicsSceneHoverEvent):
-
+        
         self._node.nodeGeometry().setHovered(False)
 
         self.update()
@@ -315,7 +317,7 @@ class NodeGraphicsObject(QGraphicsObject):
 
     #-------------------------------------------------------------------------
     def hoverMoveEvent(self, event: QGraphicsSceneHoverEvent):
-        
+
         pos = event.pos()
         geom = self._node.nodeGeometry()
 
@@ -329,6 +331,7 @@ class NodeGraphicsObject(QGraphicsObject):
 
             self.setCursor(QCursor())
         
+        self.update()
         event.accept()
 
     #-------------------------------------------------------------------------

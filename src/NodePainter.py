@@ -52,6 +52,7 @@ class NodePainter(object):
 
         NodePainter.drawValidationRect(painter, geom, model, graphicsObject)
 
+        node.nodeGraphicsObject().update()
     #-------------------------------------------------------------------------      
     @staticmethod
     def drawNodeRect(painter: QPainter, geom: NodeGeometry,
@@ -102,10 +103,12 @@ class NodePainter(object):
     @staticmethod
     def drawConnectionPoints(painter, geom, node, model, scene):
         
-        curframe = inspect.currentframe()
-        calframe = inspect.getouterframes(curframe, 2)
-        print('\nNodePainter.py: drawConnectionPoints(...)')
-        print('caller name: {} {}'.format(calframe[1][3], calframe[1][1]))
+#        curframe = inspect.currentframe()
+#        calframe = inspect.getouterframes(curframe, 2)
+#        print('\nNodePainter.py: drawConnectionPoints(...)')
+#        print('caller name: {} {}'.format(calframe[1][3], calframe[1][1]))
+        
+#        print("drawConnectionPoints")
         
         nodeStyle = StyleCollection.nodeStyle()
 
@@ -128,41 +131,39 @@ class NodePainter(object):
 
                 r = 1.0
                 
-                print('\n***** NodeId:{} isReacting: {}*****\n'.format(node.id(),  node.nodeState().isReacting().value))
-                if(node.nodeState().isReacting().value == True):
+                connPolicy = model.portOutConnectionPolicy(i) == ConnectionPolicy.Many
+                
+                canConnect = ( (not node.nodeState().getEntries(portType)[i]) or  (portType == PortType.Out and connPolicy) )
+
+       
+                if(node.nodeState().isReacting().value and 
+                        canConnect and portType == node.nodeState().reactingPortType()):
                     
-#                    print("state.getEntries(portType)[i]: ", state.getEntries(portType)[i])
-#                    print("portType: ", portType)
-                    
-                    if( ( not(bool(node.nodeState().getEntries(portType)[i])) or portType == PortType.Out) and portType == node.nodeState().reactingPortType()):
+                    diff = geom.draggingPos() - p
 
-                        diff = geom.draggingPos() - p
+                    dist = math.sqrt(QPointF.dotProduct(diff, diff))
 
-                        dist = math.sqrt(QPointF.dotProduct(diff, diff))
+                    typeConvertable = False
 
-                        typeConvertable = False
+                    if(portType == PortType.In):
 
-                        if(portType == PortType.In):
+                        typeConvertable = scene.registry().getTypeConverter(
+                                    node.nodeState().reactingDataType().id, dataType.id) != None
+                    else:
 
-                            typeConvertable = scene.registry().getTypeConverter(
-                                        node.nodeState().reactingDataType().id, dataType.id) != None
-                        else:
-
-                            typeConvertable = scene.registry().getTypeConverter(
-                                        dataType.id, node.nodeState().reactingDataType().id) != None
+                        typeConvertable = scene.registry().getTypeConverter(
+                                    dataType.id, node.nodeState().reactingDataType().id) != None
 
 
-                        if(node.nodeState().reactingDataType().id == dataType.id or typeConvertable):
+                    if(node.nodeState().reactingDataType().id == dataType.id or typeConvertable):
 
-                            thres = 40.0
-
-                            if(dist < thres):
-
-                                r = (2.0 - dist/thres)
-
-                            else:
-
-                                r = 1.0
+                        thres = 80.0
+                        r = (2.0 - dist/thres) if(dist < thres) else 1.0
+                        
+                    else:
+                        thres = 80.0
+                        r = (dist/thres) if(dist < thres) else 1.0
+                
 
                 if(connectionStyle.useDataDefinedColors()):
 
@@ -224,7 +225,6 @@ class NodePainter(object):
         nodeStyle = StyleCollection.nodeStyle()
 
         if(not model.captionVisible()):
-
             return
 
         name = model.caption()

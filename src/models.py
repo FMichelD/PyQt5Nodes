@@ -34,10 +34,16 @@ class SimpleNodeData(NodeData):
 
 ##-----------------------------------------------------------------------------
 class NaiveDataModel(NodeDataModel):
+    
+#    def __init__(self):
+#        self._caption = "Naive Data Model"
+    
+    def setCaption(self,  caption):
+        self._caption = caption
 
     def caption(self) -> str:
 
-        return "Naive Data Model"
+        return self._caption
 
     #-------------------------------------------------------------------------
     def name(self) -> str:
@@ -94,7 +100,7 @@ class NaiveDataModel(NodeDataModel):
         return SimpleNodeData
 
     #-------------------------------------------------------------------------
-    def setInData(self):
+    def setInData(self, nodeData: NodeData, port: PortIndex):
         pass
 
     #-------------------------------------------------------------------------

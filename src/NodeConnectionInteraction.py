@@ -43,24 +43,23 @@ class NodeConnectionInteraction(object):
     # /// 3) Node port is vacant
     # /// 4) Connection type equals node port type, or there is a 
     #       registered type conversion that can translate between the two
-    def canConnect(self, portIndex, typeConsverionNeeded, converterModel):
+    def canConnect(self):
 #        curframe = inspect.currentframe()
 #        calframe = inspect.getouterframes(curframe, 2)
 #        print('\n\ncaller name:', calframe[1][3])
 #        print('on:', calframe[1][1])
 #        print('\n\n')
 
-        # typeConsverionNeeded = False
-        canConnectRet = namedtuple('CanConnectRet', 'canConnect, needConvesion')
+        portIndex = INVALID
+        canConnect = False
+        typeConversionNeeded = False
+        typeConveterModel = None
         
-        requiredPort = self.connectionRequiredPort()
-
         # 1) Connection requires a port
+        requiredPort = self.connectionRequiredPort()
+        
         if(requiredPort == PortType.No_One):
-
-            canConnectRet = canConnectRet(canConnect = False, needConvesion = False)
-
-            return canConnectRet
+            return (canConnect, portIndex, typeConversionNeeded, typeConveterModel)
 
         # 2) connection point is on top of the node port
         connectionPoint = self.connectionEndScenePosition(requiredPort)
@@ -68,18 +67,13 @@ class NodeConnectionInteraction(object):
         portIndex = self.nodePortIndexUnderScenePoint(requiredPort, connectionPoint)
 
         if(portIndex == INVALID):
+            return (canConnect, portIndex, typeConversionNeeded, typeConveterModel)
 
-            canConnectRet = canConnectRet(canConnect = False, needConvesion = False)
-
-            return canConnectRet
-
-        # 3) Node port is vacant
+        # 3) Node port is vacant        
         # port should be empty
         if(not self.nodePortIsEmpty(requiredPort, portIndex)):
+            return (canConnect, portIndex, typeConversionNeeded, typeConveterModel)
 
-            canConnectRet = canConnectRet(canConnect = False, needConvesion = False)
-
-            return canConnectRet
 
         # 4) Connection type equals node port type, or there is a 
         #       registered type conversion that can translate between the two
@@ -96,27 +90,31 @@ class NodeConnectionInteraction(object):
                 converterModel = self._scene.registry().getTypeConverter(
                                                 connectionDataType.id, 
                                                 candidateNodeDataType.id)
-                if(not converterModel is None):
+                if(converterModel is not None):
+                    canConnect = True
+                    typeConversionNeeded = True
+             
+                    return (canConnect, portIndex, typeConversionNeeded, typeConveterModel)
+                else:
+                    return (canConnect, portIndex, typeConversionNeeded, typeConveterModel)
 
-                    canConnectRet = canConnectRet(canConnect = True,
-                                                 needConvesion = True)
-                
-                    return canConnectRet
 
             converterModel = self._scene.registry().getTypeConverter(
                                                 candidateNodeDataType.id, 
                                                 connectionDataType.id)
 
-            if(not converterModel is None):
+            if(converterModel is not None):
+                canConnect = True
+                typeConversionNeeded = True
+         
+                return (canConnect, portIndex, typeConversionNeeded, typeConveterModel)
+            else:
+                return (canConnect, portIndex, typeConversionNeeded, typeConveterModel)
+        
+        canConnect = True
+        typeConversionNeeded = False
 
-                canConnectRet = canConnectRet(canConnect = True,
-                                             needConvesion = True)
-
-                return canConnectRet
-
-        canConnectRet = canConnectRet(canConnect = True, needConvesion = False)
-
-        return canConnectRet
+        return (canConnect, portIndex, typeConversionNeeded, typeConveterModel)
 
 
     #-------------------------------------------------------------------------
@@ -132,22 +130,18 @@ class NodeConnectionInteraction(object):
 
         # 1) Check conditions from 'canConnect'
         portIndex = INVALID
+        canConnect = False
+        typeConversionNeeded = False
+        typeConveterModel = None
 
-        typeConsverionNeeded = False
-
-        typeConveterModel = NodeDataModel()
-
-        canConnect, typeConsverionNeeded = self.canConnect(portIndex, 
-                                                typeConsverionNeeded, 
-                                                typeConveterModel)
+        canConnect,  portIndex, typeConversionNeeded, typeConveterModel = self.canConnect()
 
         if(not canConnect):
-
             return False
 
         # 1.5) If the connection is possible but a type conversion is
         #        needed, add a converter node to the scene, and connect it properly  
-        if(typeConsverionNeeded):
+        if(typeConversionNeeded):
 
             # Determinig port types
             requiredPort = self.connectionRequiredPort()

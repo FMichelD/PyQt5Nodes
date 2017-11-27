@@ -260,7 +260,7 @@ class NodeGeometry(object):
             distance = math.sqrt(QPointF.dotProduct(p, p))
 
             if(distance < tolerance):
-                result = PortIndex(i)
+                result = PortIndex(i)            
                 break
 
         return result

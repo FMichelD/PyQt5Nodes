@@ -13,10 +13,13 @@ from NodeData import *
 from PortType import *
 
 class NodeValidationState(Enum):
-
     ERROR = -1
     WARNING = 0
     VALID = 1
+
+class ConnectionPolicy(Enum):
+    One = 1
+    Many = 0
 
 #-----------------------------------------------------------------------------
 class NodeDataModel(QObject, Serializable):
@@ -59,18 +62,6 @@ class NodeDataModel(QObject, Serializable):
         self._portCaptionVisibility = visible
 
     #--------------------------------------------------------------------------
-    @abstractmethod
-    def name(self):
-        
-        pass
-
-    #--------------------------------------------------------------------------
-    @abstractmethod
-    def clone(self):
-        
-        pass
-
-    #--------------------------------------------------------------------------
     def save() -> dict:
 
         modelJson = dict()
@@ -78,6 +69,20 @@ class NodeDataModel(QObject, Serializable):
         modelJson["name"] = self.name()
 
         return modelJson
+        
+    #--------------------------------------------------------------------------
+    def portOutConnectionPolicy(self, PortIndex): 
+        return ConnectionPolicy.Many;
+        
+    #--------------------------------------------------------------------------
+    @abstractmethod
+    def name(self):        
+        pass
+        
+    #--------------------------------------------------------------------------
+    @abstractmethod
+    def clone(self):        
+        pass
 
     #--------------------------------------------------------------------------
     @abstractmethod
@@ -93,14 +98,12 @@ class NodeDataModel(QObject, Serializable):
 
     #--------------------------------------------------------------------------
     #@abstractmethod
-    def setInData(self, nodeData: NodeData, port: PortIndex):
-        
+    def setInData(self, nodeData: NodeData, port: PortIndex):        
         pass
 
     #--------------------------------------------------------------------------
     @abstractmethod
-    def outData(self, port: PortIndex) -> NodeData:
-        
+    def outData(self, port: PortIndex) -> NodeData:        
         pass
 
     #--------------------------------------------------------------------------
