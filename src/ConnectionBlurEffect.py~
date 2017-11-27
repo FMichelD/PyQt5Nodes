@@ -10,6 +10,9 @@ from PyQt5.QtWidgets import *
 
 ##----------------------------------------------------------------------------
 class ConnectionBlurEffect(QGraphicsBlurEffect):
+
+    # _object = ConnectionGraphicsObject()
+
     def __init__(self, cgobject):
 
         super().__init__()
@@ -18,6 +21,7 @@ class ConnectionBlurEffect(QGraphicsBlurEffect):
 
     #-------------------------------------------------------------------------
     def draw(self, painter):
+
         QGraphicsBlurEffect.draw(painter)
 
         # //ConnectionPainter::paint(painter,

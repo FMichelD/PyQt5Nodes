@@ -33,12 +33,6 @@ class FlowScene(QGraphicsScene):
 #-----------------------------------------------------------------------------
     def createConnection(self, *args):
 
-        curframe = inspect.currentframe()
-        calframe = inspect.getouterframes(curframe, 2)
-        print("\nFlowScene.py: createConnection(...)")
-        print('caller name:', calframe[1][3])
-        print('on:', calframe[1][1])
-
         signature = tuple(arg.__class__ for arg in args)
 
         typemap = { (PortType, Node, PortIndex) : self.createConnectionPtNPi,

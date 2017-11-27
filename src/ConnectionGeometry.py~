@@ -71,7 +71,9 @@ class ConnectionGeometry(object):
         ratio1 = 0.5
 
         if(xDistance <= 0):
+
             verticalOffset = -minimum
+
             ratio1 = 1.0
 
         # //double verticalOffset2 = verticalOffset;
@@ -86,7 +88,7 @@ class ConnectionGeometry(object):
         c2 = QPointF(self._in.x() - minimum*ratio1,
                     self._in.y() + verticalOffset)
 
-        return (c1, c2)
+        return tuple([c1, c2])
 
     #-------------------------------------------------------------------------
     def source(self):
