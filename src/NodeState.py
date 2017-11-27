@@ -61,8 +61,8 @@ class NodeState(object):
 
         connections = self.getEntries(portType)
 
-#        connections[portIndex].update([(connection.id(), connection)])
-        connections[portIndex] = dict([(connection.id(), connection)])
+        connections[portIndex].update({connection.id(): connection})
+#        connections[portIndex] = dict([(connection.id(), connection)])
 
     #-----------------------------------------------------------------------------
     def eraseConnection(self, portType: PortType, portIndex: PortIndex,
