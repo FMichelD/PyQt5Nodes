@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python3
 
+from inspect import currentframe, getframeinfo
+
 from PyQt5.QtCore import *
 
 from PortType import *
 from StyleCollection import *
-
 
 ##----------------------------------------------------------------------------
 class ConnectionGeometry(object):
@@ -18,7 +19,10 @@ class ConnectionGeometry(object):
 
     #-------------------------------------------------------------------------
     def getEndPoint(self, portType):
-        Q_ASSERT(portType != PortType.No_One)
+        if(portType != PortType.No_One):
+            frameinfo = getframeinfo(currentframe())
+            print(frameinfo.filename, frameinfo.lineno)
+
 
         return self._out if(portType == PortType.Out) else self._in
 
