@@ -4,21 +4,28 @@
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-#from FlowScene import *
+from enum import Enum
 
-#from Connection import *
-#from ConnectionGeometry import *
+from FlowScene import *
+
+from Connection import *
+from ConnectionGeometry import *
 from ConnectionPainter import *
-#from ConnectionState import *
-#from ConnectionBlurEffect import *
+from ConnectionState import *
+from ConnectionBlurEffect import *
 
+from Node import *
+from NodeGraphicsObject import *
 from NodeConnectionInteraction import *
+
 from PortType import *
 
 ##----------------------------------------------------------------------------
 class ConnectionGraphicsObject(QGraphicsObject):
     def __init__(self, scene, connection):
         super().__init__()
+
+        self.QGType = QGraphicsObject.UserType + 1
 
         self._scene = scene
 
@@ -32,6 +39,8 @@ class ConnectionGraphicsObject(QGraphicsObject):
 
         self.setAcceptHoverEvents(True)
 
+#        self.addGraphicsEffect()
+
         self.setZValue(-1.0)
 
     #-------------------------------------------------------------------------
@@ -43,39 +52,35 @@ class ConnectionGraphicsObject(QGraphicsObject):
 #        print('on:', calframe[1][1])
 #        print('')
 #
-#        print("Remove ConnectionGraphics from scene")
-
+        print("Remove ConnectionGraphics from scene")
         self._scene.removeItem(self)
 
     #-------------------------------------------------------------------------
     def connection(self):
-
         return self._connection
 
     #-------------------------------------------------------------------------
+    #override
     def boundingRect(self):
-
         return self._connection.connectionGeometry().boundingRect()
 
     #-------------------------------------------------------------------------
+    #override
     def shape(self):
-
         geom = self._connection.connectionGeometry()
 
         return ConnectionPainter.getPainterStroke(geom)
 
-    #----------------------------------------------------ConnectionGraphicsObject.py---------------------
+    #-------------------------------------------------------------------------
     def setGeometryChanged(self):
         self.prepareGeometryChange()
 
     #-------------------------------------------------------------------------
     def move(self):
         def moveEndPoint(portType):
-
             node = self._connection.getNode(portType)
 
             if(node):
-
                 nodeGraphics = node.nodeGraphicsObject()
 
                 nodeGeom = node.nodeGeometry()
@@ -98,8 +103,13 @@ class ConnectionGraphicsObject(QGraphicsObject):
         moveEndPoint(PortType.Out)
 
     #-------------------------------------------------------------------------
-    def paint(self, painter, option, widget):
+    def lock(self,  locked: bool):
+        self.setFlag(QGraphicsItem.ItemIsMovable, not locked)
+        setFlag(QGraphicsItem.ItemIsFocusable, not locked)
+        setFlag(QGraphicsItem.ItemIsSelectable, not locked)
 
+    #-------------------------------------------------------------------------
+    def paint(self, painter, option, widget):
         painter.setClipRect(option.exposedRect)
 
         ConnectionPainter.paint(painter, self._connection)
@@ -110,11 +120,11 @@ class ConnectionGraphicsObject(QGraphicsObject):
 
     #-------------------------------------------------------------------------
     def mouseMoveEvent(self, event):
-
         self.prepareGeometryChange()
 
         view = QGraphicsView(event.widget())
 
+        logging.debug("CGO.py verificar locateNodeAt na ln: 127")
         node = self._scene.locateNodeAt(event.scenePos(), self._scene, view.transform())
 
         state = self._connection.connectionState()
@@ -127,18 +137,14 @@ class ConnectionGraphicsObject(QGraphicsObject):
                                             self._connection.dataType(),
                                             event.scenePos())
 
-#            print("NodeID: {}, {}".format(node.id(), node.nodeState().isReacting()))
-
         offset = event.pos() - event.lastPos()
 
         requiredPort = self._connection.requiredPort()
 
         if (requiredPort is not PortType.No_One):
-
             self._connection.connectionGeometry().moveEndPoint(requiredPort, offset)
 
-
-        logging.debug("CGO.py verificar ln: 153")
+        logging.debug("CGO.py verificar ln: 146")
         if(node):
             node.nodeGraphicsObject().update()
 
@@ -152,15 +158,15 @@ class ConnectionGraphicsObject(QGraphicsObject):
         self.ungrabMouse()
         event.accept()
 
+        logging.debug("CGO.py verificar locateNodeAt na ln: 161")
         node = self._scene.locateNodeAt(event.scenePos(), self._scene,
                                 self._scene.views()[0].transform())
 
         interaction = NodeConnectionInteraction(node, self._connection, self._scene)
 
-        if((not node is None) and interaction.tryConnect()):
+        if(node and interaction.tryConnect()):
             node.resetReactionToConnection()
         elif(self._connection.connectionState().requiresPort()):
-            self._scene.removeItem(self)
             self._scene.deleteConnection(self._connection)
 
     #-------------------------------------------------------------------------
@@ -179,11 +185,9 @@ class ConnectionGraphicsObject(QGraphicsObject):
 
     #-------------------------------------------------------------------------
     def addGraphicsEffect(self):
-
         effect = QGraphicsBlurEffect()
 
         effect.setBlurRadius(5)
-
         self.setGraphicsEffect(effect)
 
         # //auto effect = new QGraphicsDropShadowEffect;
@@ -191,4 +195,8 @@ class ConnectionGraphicsObject(QGraphicsObject):
         # //effect->setOffset(4, 4);
         # //effect->setColor(QColor(Qt::gray).darker(800));
 
+    #-------------------------------------------------------------------------
+    #override
+    def type(self):
+        return self.QGType
 ##----------------------------------------------------------------------------
