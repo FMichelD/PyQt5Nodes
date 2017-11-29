@@ -7,24 +7,28 @@ from PyQt5.QtGui import  *
 #from DataModelRegistry import *
 
 from Style import *
-#from StyleCollection import *
+from StyleCollection import *
+
+import resources
 
 ##----------------------------------------------------------------------------
 class ConnectionStyle(Style):
+#    , jsonText: str="./DefaultStyle.json"
+    def __init__(self):
 
-    def __init__(self, jsonText: str="./DefaultStyle.json"):        
-        #initResoureces()
-        self.loadJsonFile(jsonText)
+        self.loadJsonFile(":resource/DefaultStyle.json")
+
+        self._UseDataDefinedColors = True
 
     #-------------------------------------------------------------------------
     def setConnectionSyle(self, jsonText: str):
         self.style = ConnectionStyle(jsonText)
-              
+
 #        StyleCollection.setConnectionSyle(style)
 
     #-------------------------------------------------------------------------
     def ConnectionStyleCheckUndefinedValue(self, v: dict, variable):
-        
+
         if(v.type() == QJsonValue.Undefined or v.type() == QJsonValue.Null):
 
             qWarning("Undefined value for parameter: {}".format(variable))
@@ -32,7 +36,7 @@ class ConnectionStyle(Style):
     #-------------------------------------------------------------------------
     def ConnectionValuesExists(self, v):
 
-        if(v.type() != QJsonValue.Undefined and v.type() != QJsonValue.Null):        
+        if(v.type() != QJsonValue.Undefined and v.type() != QJsonValue.Null):
 
             return True
 
@@ -44,16 +48,16 @@ class ConnectionStyle(Style):
         self.ConnectionStyleCheckUndefinedValue(valuesRef, variable)
 
         if(self.ConnectionValuesExists(valuesRef)):
-        
+
             if(valuesRef.isArray()):
 
                 colorArray = valuesRef.toArray();
 
                 rgb = []
-                
+
                 for it in colorArray :
                     rgb.append(it.toDouble())
-                
+
                 return QColor(rgb[0], rgb[1], rgb[2])
             else:
                 return QColor(valuesRef.toString())
@@ -132,10 +136,10 @@ class ConnectionStyle(Style):
             return self.NormalColor
 
         else:
-            
+
             seed(typeId)
-            
-            hue = randrange(359) 
+
+            hue = randrange(359)
 
             sat = randrange(128,  255)
 
@@ -143,7 +147,7 @@ class ConnectionStyle(Style):
 
     #-------------------------------------------------------------------------
     def selectedColor(self):
-        return self.SelectedColor      
+        return self.SelectedColor
 
     #-------------------------------------------------------------------------
     def selectedHaloColor(self):
@@ -158,7 +162,7 @@ class ConnectionStyle(Style):
         return self.LineWidth
 
     #-------------------------------------------------------------------------
-    def constructionLineWidth(self):        
+    def constructionLineWidth(self):
         return self.ConstructionLineWidth
 
     #-------------------------------------------------------------------------
@@ -168,7 +172,7 @@ class ConnectionStyle(Style):
 
     #-------------------------------------------------------------------------
     def useDataDefinedColors(self):
-        
+
         return self.UseDataDefinedColors
 
 ##----------------------------------------------------------------------------
