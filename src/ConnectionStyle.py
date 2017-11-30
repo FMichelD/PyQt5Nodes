@@ -4,55 +4,46 @@
 from random import seed,  randrange
 
 from PyQt5.QtGui import  *
-#from DataModelRegistry import *
 
 from Style import *
 from StyleCollection import *
 
-import resources
-
 ##----------------------------------------------------------------------------
 class ConnectionStyle(Style):
-#    , jsonText: str="./DefaultStyle.json"
-    def __init__(self):
+    def __init__(self, jsonFile: str="./DefaultStyle.json", jsonText: str=None  ):
 
-        self.loadJsonFile(":resource/DefaultStyle.json")
+        self.loadJsonFile(jsonFile)
 
-        self._UseDataDefinedColors = True
+        if(jsonText):
+            self.loadJsonText(jsonText)
 
     #-------------------------------------------------------------------------
     def setConnectionSyle(self, jsonText: str):
         self.style = ConnectionStyle(jsonText)
 
-#        StyleCollection.setConnectionSyle(style)
+        StyleCollection.setConnectionSyle(style)
 
     #-------------------------------------------------------------------------
     def ConnectionStyleCheckUndefinedValue(self, v: dict, variable):
 
         if(v.type() == QJsonValue.Undefined or v.type() == QJsonValue.Null):
-
             qWarning("Undefined value for parameter: {}".format(variable))
 
     #-------------------------------------------------------------------------
     def ConnectionValuesExists(self, v):
 
         if(v.type() != QJsonValue.Undefined and v.type() != QJsonValue.Null):
-
             return True
 
     #-------------------------------------------------------------------------
     def ConnectionStyleReadColor(self, values, variable):
-
         valuesRef = values[variable]
 
         self.ConnectionStyleCheckUndefinedValue(valuesRef, variable)
 
         if(self.ConnectionValuesExists(valuesRef)):
-
             if(valuesRef.isArray()):
-
                 colorArray = valuesRef.toArray();
-
                 rgb = []
 
                 for it in colorArray :
@@ -64,7 +55,6 @@ class ConnectionStyle(Style):
 
     #-------------------------------------------------------------------------
     def ConnectionStyleReadFloat(self, values, variable):
-
         valuesRef = values[variable]
 
         self.ConnectionStyleCheckUndefinedValue(valuesRef, variable)
@@ -73,7 +63,6 @@ class ConnectionStyle(Style):
 
     #-------------------------------------------------------------------------
     def ConnectionStyleReadBool(self, values, variable):
-
         valuesRef = values[variable]
 
         self.ConnectionStyleCheckUndefinedValue(valuesRef, variable)
@@ -84,7 +73,6 @@ class ConnectionStyle(Style):
 
     #-------------------------------------------------------------------------
     def loadJsonFile(self, styleFile: str):
-
         file = QFile(styleFile)
 
         if(not file.open(QIODevice.ReadOnly)):
@@ -97,12 +85,10 @@ class ConnectionStyle(Style):
 
     #-------------------------------------------------------------------------
     def loadJsonText(self, jsonText: str):
-
         self.loadJsonFromByteArray(jsonText)
 
     #-------------------------------------------------------------------------
     def loadJsonFromByteArray(self, byteArray: QByteArray):
-
         json = QJsonDocument(QJsonDocument.fromJson(byteArray))
 
         topLevelObject = json.object()
@@ -125,22 +111,15 @@ class ConnectionStyle(Style):
 
     #-------------------------------------------------------------------------
     def constructionColor(self):
-
         return self.ConstructionColor
 
     #-------------------------------------------------------------------------
     def normalColor(self, typeId=None):
-
         if(typeId is None):
-
             return self.NormalColor
-
         else:
-
             seed(typeId)
-
             hue = randrange(359)
-
             sat = randrange(128,  255)
 
             return QColor.fromHsl(hue, sat, 160)
@@ -167,12 +146,10 @@ class ConnectionStyle(Style):
 
     #-------------------------------------------------------------------------
     def pointDiameter(self):
-
         return self.PointDiameter
 
     #-------------------------------------------------------------------------
     def useDataDefinedColors(self):
-
         return self.UseDataDefinedColors
 
 ##----------------------------------------------------------------------------
