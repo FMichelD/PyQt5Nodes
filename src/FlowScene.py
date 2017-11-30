@@ -6,21 +6,24 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
 from Node import *
+from NodeDataModel import *
+from NodeGraphicsObject import *
+from NodeStyle import *
+
 from DataModelRegistry import *
 from PortType import *
+
 from Connection import *
 from ConnectionGraphicsObject import *
-#from NodeGraphicsObject import *
+
 
 class FlowScene(QGraphicsScene):
-
     def __init__(self, registry):
+        super(FlowScene,  self).__init__()
 
         self._nodes = dict()
         self._connections = dict()
         self._registry = DataModelRegistry()
-
-        super(FlowScene,  self).__init__()
 
         self.setItemIndexMethod(QGraphicsScene.NoIndex)
 
@@ -32,13 +35,6 @@ class FlowScene(QGraphicsScene):
 
 #-----------------------------------------------------------------------------
     def createConnection(self, *args):
-
-        curframe = inspect.currentframe()
-        calframe = inspect.getouterframes(curframe, 2)
-        print("\nFlowScene.py: createConnection(...)")
-        print('caller name:', calframe[1][3])
-        print('on:', calframe[1][1])
-
         signature = tuple(arg.__class__ for arg in args)
 
         typemap = { (PortType, Node, PortIndex) : self.createConnectionPtNPi,
@@ -52,17 +48,9 @@ class FlowScene(QGraphicsScene):
 #-----------------------------------------------------------------------------
     def createConnectionPtNPi(self, connectedPort: PortType, node,
                         portIndex: PortIndex):
-
-        curframe = inspect.currentframe()
-        calframe = inspect.getouterframes(curframe, 2)
-        print("\nFlowScene.py: createConnectionPtNPi(...)")
-        print('caller name:', calframe[1][3])
-        print('on:', calframe[1][1])
-
         connection = Connection(connectedPort, node, portIndex)
 
         cgo = ConnectionGraphicsObject(self, connection)
-#        #print("cgo: ",  cgo)
 
         # after this function connection points to node port
         connection.setGraphicsObject(cgo)
@@ -115,17 +103,14 @@ class FlowScene(QGraphicsScene):
         self.connectionDeleted.emit(connection)
         connection.removeFromNodes()
         self._connections.pop(connection.id())
+
         cgo = connection.getConnectionGraphicsObject()
         cgo.__del__()
 
-#        connection.__del__()
 #-----------------------------------------------------------------------------
     def createNode(self, dataModel: NodeDataModel):
-
         node = Node(dataModel)
-
         ngo = NodeGraphicsObject(self, node)
-
         node.setGraphicsObject(ngo)
 
         self._nodes[node.id()] = node
@@ -136,7 +121,6 @@ class FlowScene(QGraphicsScene):
 
 #-----------------------------------------------------------------------------
     def restoreNode(self, nodeJson: dict):
-
         modelName = nodeJson["model"].toObject()["name"].toString()
 
         dataModel = registry().create(modelName)
@@ -146,21 +130,16 @@ class FlowScene(QGraphicsScene):
                     modelName.toLocal8Bit().data()))
 
         node = Node(dataModel)
-
-#        ngo = NodeGraphicsObject(node)
-        ngo = node.nodeGraphicsObject()
-
+        ngo = NodeGraphicsObject(self, node)
         node.setGraphicsObject(ngo)
 
         node.restore(nodeJson)
 
-        nodePtr = node.get()
-
         self._nodes[node.id()] = node
 
-        self.nodeCreated.emit(nodePtr)
+        self.nodeCreated.emit(node)
 
-        return nodePtr
+        return node
 
     #-----------------------------------------------------------------------------
     def removeNode(self, node):
@@ -170,9 +149,7 @@ class FlowScene(QGraphicsScene):
 
         #-----------------------------------------------------------------------------
         def deleteConnections(portType: PortType):
-
             nodeState = node.nodeState()
-
             nodeEntries = nodeState.getEntries(portType)
 
             for connection in nodeEntries:
@@ -188,33 +165,28 @@ class FlowScene(QGraphicsScene):
         ngo = nd.nodeGraphicsObject()
 
         self._nodes.pop(node.id())
-
         ngo.__del__()
 
 #-----------------------------------------------------------------------------
     def registry(self) -> DataModelRegistry:
-
         return self._registry
 
 #-----------------------------------------------------------------------------
     def setRegistry(self, registry: DataModelRegistry):
-
         self._registry = registry
 
 #-----------------------------------------------------------------------------
     def iterateOverNodes(self, visitor):
+        for node in self._nodes:
+            visitor(node.second.get())
 
-        for self._node in self._nodes:
-            visitor(self._node.second.get())
 #-----------------------------------------------------------------------------
     def iterateOverNodeData(self, visitor: NodeDataModel):
-
-        for self._node in self._nodes:
-            visitor(self._node.second.NodeDataModel())
+        for node in self._nodes:
+            visitor(node.second.NodeDataModel())
 
 #-----------------------------------------------------------------------------
     def iterateOverDataDependentOrder(self, visitor: NodeDataModel):
-
         visiteNodesSet = []
 
         #-----------------------------------------------------------------------------
@@ -231,9 +203,7 @@ class FlowScene(QGraphicsScene):
 
         # iterate over "leaf" nodes
         for self._node in self._nodes:
-
             node = self._node.second
-
             model = node.nodeDataModel
 
             if( self.isNodeLeaf(node, model)):
@@ -249,7 +219,6 @@ class FlowScene(QGraphicsScene):
                 for conn in connections:
                     if(visiteNodesSet.find(conn.second.getNode(PortType.Out).id()) ==
                         visiteNodesSet.end()):
-
                         return False
 
                 return True
@@ -269,33 +238,27 @@ class FlowScene(QGraphicsScene):
 
 #-----------------------------------------------------------------------------
     def getNodePosition(self, node) -> QPointF:
-
         return node.nodeGraphicsObject().pos()
 
 #-----------------------------------------------------------------------------
     def setNodePositon(self, node, pos: QPointF):
-
         node.nodeGraphicsObject().setPos()
         node.nodeGraphicsObject().moveConnections()
 
 #-----------------------------------------------------------------------------
     def getNodeSize(self, node) -> QSizeF:
-
         return QSizeF(node.nodeGEometry().width(), node.nodeGEometry().height())
 
 #-----------------------------------------------------------------------------
     def nodes(self):
-
         return self._nodes
 
 #-----------------------------------------------------------------------------
     def connections(self) -> Connection:
-
         return self._connections
 
 #-----------------------------------------------------------------------------
     def selectNodes(self) -> list:
-
         graphicsItems = selectedItems()
 
         ret = []
@@ -325,7 +288,6 @@ class FlowScene(QGraphicsScene):
 #        #print("mouse on scene")
 #-----------------------------------------------------------------------------
     def save(self):
-
         fileName = QFileDialog.getSaveFileName(None, "Open Flow Scene",
                                                 QDir.homePath(),
                                                 "Flow Scene Files (*.flow)")
@@ -440,10 +402,10 @@ class FlowScene(QGraphicsScene):
 
             return graphicsItem.node()
 #-----------------------------------------------------------------------------
-    def itemNotIsNone(self, item):
-
-        if(not item is Node):
-            return item
+#    def itemNotIsNone(self, item):
+#
+#        if(not item is Node):
+#            return item
 
     #-------------------------------------------------------------------------
     #Signals
