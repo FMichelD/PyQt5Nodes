@@ -11,7 +11,6 @@ from StyleCollection import *
 ##----------------------------------------------------------------------------
 class ConnectionStyle(Style):
     def __init__(self, jsonFile: str="./DefaultStyle.json", jsonText: str=None  ):
-
         self.loadJsonFile(jsonFile)
 
         if(jsonText):
