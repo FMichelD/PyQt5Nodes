@@ -5,94 +5,66 @@ from NodeDataModel import *
 #from NodeData import *
 
 class DataModelRegistry(object):
-
-    _registeredModelsCategory = dict()
-    _registeredModels = dict()
-    _categories = set()
-    _registeredTypeConverters = dict()
-    
     def __init__(self):
-        pass
+        self._registeredModelsCategory = dict()
+        self._registeredModels = dict()
+        self._categories = set()
+        self._registeredTypeConverters = dict()
 
 #-----------------------------------------------------------------------------
     def create(self, modelName: str) -> NodeDataModel:
-
-#        it = self._registeredModels.find(modelName)
-#
-#        if( it != self._registeredModels.end()):
-#            return it.second.clone()
-
         if modelName in self._registeredModels:
             it = self._registeredModels[modelName]
-
             return it.clone()
-        
+
         return None
 
 #-----------------------------------------------------------------------------
     def registeredModels(self):
-
         return self._registeredModels
-    
+
 #-----------------------------------------------------------------------------
     def registeredModelsCategoryAssociation(self):
-        
         return self._registeredModelsCategory
 
 #-----------------------------------------------------------------------------
     def categories(self):
-
         return self._categories
 
 #-----------------------------------------------------------------------------
     def getTypeConverter(self, sourceTypeId: str, destTypeId: str) -> NodeDataModel:
-
         typeConverterKey = sourceTypeId
         typeConverterValue = destTypeId
-
-#        converter = sefl._registeredTypeConverters.find(typeConverterKey)
-#
-#        if(converter != self._registeredTypeConverters.end()):
-#            return converter.second.Model.clone()
 
         if(typeConverterKey in self._registeredTypeConverters and
                 typeConverterValue == self._registeredTypeConverters[typeConverterKey]):
             return converter(typeConverterKey).Model.clone()
-        
+
         return None
 
 #-----------------------------------------------------------------------------
     def registerModel(self,  uniqueModel, category: str="Nodes"):
-        
-        # static_assert(std::is_base_of<NodeDataModel, ModelType>::value,
-        #           "Must pass a subclass of NodeDataModel to registerModel");
-
         if(not isinstance(uniqueModel, NodeDataModel)):
             print("Must pass a subclass of NodeDataModel to registerModel")
 
         name = uniqueModel.name()
-       
-        if(not name in self._registeredModels):
-        
-            self._registeredModels[name] = uniqueModel
 
+        if(not name in self._registeredModels):
+            self._registeredModels[name] = uniqueModel
             self._categories.add(category)
-                  
             self._registeredModelsCategory[name] = category
 
         if(isinstance(uniqueModel, bool) and uniqueModel == True):
-
             registeredModelRef = self._registeredModels[name]
 
-            # Type converter node should have exactly one input and output 
+            # Type converter node should have exactly one input and output
             #   ports, if thats not the case, we skip the registration.
-            #If the input and output type is the same, we also skip 
+            #If the input and output type is the same, we also skip
             #   registration, because thats not a typecast node.
-            if(registeredModelRef.nPorts(PortType.In) != 1 or 
+            if(registeredModelRef.nPorts(PortType.In) != 1 or
                     registeredModelRef.nPorts(PortType.Out) != 1 or
                     registeredModelRef.dataType(PortType.In, 0).id ==
                     registeredModelRef.dataType(PortType.Out, 0).id):
-
                 return
 
             converter = TypeConverterItem()
@@ -110,15 +82,14 @@ class DataModelRegistry(object):
 
 ##-----------------------------------------------------------------------------
 class TypeConverterItem(object):
-
     Model = NodeDataModel
     SourceType = NodeDataType
     DestinationType = NodeDataType
 
 
 
-        
 
-        
+
+
 
 
