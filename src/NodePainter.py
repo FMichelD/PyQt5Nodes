@@ -23,22 +23,16 @@ class NodePainter(object):
     #-------------------------------------------------------------------------
     @staticmethod
     def paint(painter: QPainter, node, scene):
-#        curframe = inspect.currentframe()
-#        calframe = inspect.getouterframes(curframe, 2)
-#        print('\nNodePainter.py: paint(...)')
-#        print('caller name: {} {}'.format(calframe[1][3], calframe[1][1]))
-        
+
         geom = node.nodeGeometry()
-
         state = node.nodeState()
-
         graphicsObject = node.nodeGraphicsObject()
 
         geom.recalculateSize(painter.font())
-
-        NodePainter.drawNodeRect(painter, geom, graphicsObject)
-
+        
         model = node.nodeDataModel()
+
+        NodePainter.drawNodeRect(painter, geom, model, graphicsObject)        
         
         NodePainter.drawConnectionPoints(painter, geom, node, model, scene)
 
@@ -51,34 +45,32 @@ class NodePainter(object):
         NodePainter.drawResizeRect(painter, geom, model)
 
         NodePainter.drawValidationRect(painter, geom, model, graphicsObject)
+    
+        # call custom painter
+        painterDelegate = model.painterDelegate()
+        if(painterDelegate):
+            painterDelegate.painter(painter, geom, model)
 
-        node.nodeGraphicsObject().update()
     #-------------------------------------------------------------------------      
     @staticmethod
-    def drawNodeRect(painter: QPainter, geom: NodeGeometry,
-                        graphicsObject: QGraphicsItem):
+    def drawNodeRect(painter: QPainter,
+                        geom: NodeGeometry,
+                        model: NodeDataModel, 
+                        graphicsObject):
 
-        nodeStyle = StyleCollection.nodeStyle()
+        nodeStyle = model.nodeStyle()
 
         if(graphicsObject.isSelected()):
-
             color = nodeStyle.SelectedBoundaryColor
-
         else:
-
             color = nodeStyle.NormalBoundaryColor
 
 
         if(geom.hovered()):
-
             p = QPen(color, nodeStyle.HoveredPenWidth)
-
             painter.setPen(p)
-
         else:
-
             p = QPen(color, nodeStyle.PenWidth)
-
             painter.setPen(p)
 
         gradient = QLinearGradient(QPointF(0.0, 0.0), QPointF(2.0, geom.height()))
@@ -101,43 +93,32 @@ class NodePainter(object):
 
     #-------------------------------------------------------------------------
     @staticmethod
-    def drawConnectionPoints(painter, geom, node, model, scene):
-        
-#        curframe = inspect.currentframe()
-#        calframe = inspect.getouterframes(curframe, 2)
-#        print('\nNodePainter.py: drawConnectionPoints(...)')
-#        print('caller name: {} {}'.format(calframe[1][3], calframe[1][1]))
-        
-#        print("drawConnectionPoints")
-        
+    def drawConnectionPoints(painter, geom, node, model, scene):        
         nodeStyle = StyleCollection.nodeStyle()
-
         connectionStyle = StyleCollection.connectionStyle()
 
         diameter = nodeStyle.ConnectionPointDiameter
-
         reducedDiameter = diameter * 0.6
 
         #inner function
         def drawPoints(portType: PortType):
-
             n = len(node.nodeState().getEntries(portType))
 
             for i in range(0, n):
-
                 p = geom.portScenePosition(i, portType)
-
                 dataType = model.dataType(portType, i)
 
                 r = 1.0
                 
                 connPolicy = model.portOutConnectionPolicy(i) == ConnectionPolicy.Many
                 
-                canConnect = ( (not node.nodeState().getEntries(portType)[i]) or  (portType == PortType.Out and connPolicy) )
+                canConnect = ((not node.nodeState().getEntries(portType)[i]) or
+                                (portType == PortType.Out and connPolicy) )
 
        
                 if(node.nodeState().isReacting().value and 
-                        canConnect and portType == node.nodeState().reactingPortType()):
+                        canConnect and
+                        portType == node.nodeState().reactingPortType()):
                     
                     diff = geom.draggingPos() - p
 
@@ -156,21 +137,16 @@ class NodePainter(object):
 
 
                     if(node.nodeState().reactingDataType().id == dataType.id or typeConvertable):
-
-                        thres = 80.0
-                        r = (2.0 - dist/thres) if(dist < thres) else 1.0
-                        
+                        thres = 40.0
+                        r = (2.0 - dist/thres) if(dist < thres) else 1.0                        
                     else:
-                        thres = 80.0
+                        thres = 40.0
                         r = (dist/thres) if(dist < thres) else 1.0
                 
 
                 if(connectionStyle.useDataDefinedColors()):
-
                     painter.setBrush(connectionStyle.normalColor(dataType.id))
-
                 else:
-
                     painter.setBrush(nodeStyle.ConnectionPointColor)
 
                 painter.drawEllipse(p, reducedDiameter * r, reducedDiameter * r)
@@ -183,9 +159,7 @@ class NodePainter(object):
     def drawFilledConnectionPoints(painter, geom, state, model):
 
         nodeStyle = StyleCollection.nodeStyle()
-
         connectionStyle = StyleCollection.connectionStyle()
-
         diameter = nodeStyle.ConnectionPointDiameter
 
         #inner function
@@ -202,14 +176,10 @@ class NodePainter(object):
                     dataType = model.dataType(portType, i)
 
                     if(connectionStyle.useDataDefinedColors()):
-
                         c = connectionStyle.normalColor(dataType.id)
-
                         painter.setPen(c)
                         painter.setBrush(c)
-
                     else:
-
                         painter.setPen(nodeStyle.FilledConnectionPointColor)
                         painter.setBrush(nodeStyle.FilledConnectionPointColor)
 
@@ -262,6 +232,7 @@ class NodePainter(object):
             nodeStyle = StyleCollection.nodeStyle()
 
             entries = state.getEntries(portType)
+
 
             n = len(entries)
 
