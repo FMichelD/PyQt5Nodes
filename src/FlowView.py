@@ -13,12 +13,8 @@ from StyleCollection import *
 
 class FlowView(QGraphicsView):
 
-    def __init__(self, scene: FlowScene) :
-        super(FlowView,  self).__init__()
-
-        self._clickPos = QPointF();
-
-        self._scene = scene
+    def __init__(self, scene: FlowScene=None,  parent: QWidget=None) :
+        super(QGraphicsView, self).__init__(parent)
 
         self.setDragMode(QGraphicsView.ScrollHandDrag)
         self.setRenderHint(QPainter.Antialiasing)
@@ -38,20 +34,20 @@ class FlowView(QGraphicsView):
 
         #self.setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
 
+        if(scene):
+            self.setScene(scene)
+            
         """ setup actions """
         self.__clearSelectionAction = QAction(("Clear Selection"), self)
         self.__clearSelectionAction.setShortcut(Qt.Key_Escape)
-
         self.__clearSelectionAction.triggered.connect(self._scene.clearSelection)
-
         self.addAction(self.__clearSelectionAction);
 
         self._deleteSelectionAction = QAction("Delete Selection",self)
         self._deleteSelectionAction.setShortcut(Qt.Key_Delete)
-#        self._deleteSelectionAction.triggered.connect(self.deleteClicked)
         self._deleteSelectionAction.triggered.connect(self.deleteSelectedNodes)
         self.addAction(self._deleteSelectionAction)
-
+    
     #-------------------------------------------------------------------------
     def clearSelectionAction(self) -> QAction:
         return _clearSelectionAction
@@ -60,6 +56,11 @@ class FlowView(QGraphicsView):
     def deleteSelectionAction(self) -> QAction:
         return _deleteSelectionAction
 
+    #--------------------------------------------------------------------------
+    def setScene(self, scene: FlowScene):
+        self._scene = scene
+        QGraphicsView.setScene(self, self._scene)
+        
     #--------------------------------------------------------------------------
     def mousePressEvent(self,  event: QMouseEvent):
         QGraphicsView.mousePressEvent(self, event);
