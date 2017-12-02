@@ -11,6 +11,7 @@ from PyQt5.QtCore import *
 from Serializable import *
 from NodeData import *
 from PortType import *
+from StyleCollection import *
 
 class NodeValidationState(Enum):
     ERROR = -1
@@ -30,40 +31,35 @@ class NodeDataModel(QObject, Serializable):
     def __init__(self):
         QObject.__init__(self)
 
+        self._nodeStyle = StyleCollection.nodeStyle()
+        
     #--------------------------------------------------------------------------
     @abstractmethod
     def caption(self) -> str:
-        
         pass
 
     #--------------------------------------------------------------------------
     def captionVisible(self) -> bool:
-
-        return self._captionVisibility
+        return True
 
     #--------------------------------------------------------------------------
     def setCaptionVisible(self, visible: bool):
-
         self._captionVisibility = visible
 
     #--------------------------------------------------------------------------
     def portCaption(self, portType: PortType, portIndex: PortIndex) -> str:
-
         return ("")
 
     #--------------------------------------------------------------------------
     def portCaptionVisible(self, portType: PortType, portIndex: PortIndex):
-
-        return self._portCaptionVisibility
+        return False
 
     #--------------------------------------------------------------------------
     def setPortCaptionVisible(self, visible: bool):
-
         self._portCaptionVisibility = visible
 
     #--------------------------------------------------------------------------
     def save() -> dict:
-
         modelJson = dict()
         
         modelJson["name"] = self.name()
@@ -86,14 +82,12 @@ class NodeDataModel(QObject, Serializable):
 
     #--------------------------------------------------------------------------
     @abstractmethod
-    def nPorts(self, portType: PortType) -> int:
-        
+    def nPorts(self, portType: PortType) -> int:        
         pass
 
     #--------------------------------------------------------------------------
     @abstractmethod
-    def dataType(self, portType: PortType, portIndex: PortIndex) -> NodeDataType:
-        
+    def dataType(self, portType: PortType, portIndex: PortIndex) -> NodeDataType:        
         pass
 
     #--------------------------------------------------------------------------
@@ -108,20 +102,33 @@ class NodeDataModel(QObject, Serializable):
 
     #--------------------------------------------------------------------------
     @abstractmethod
-    def embeddedWidget(self) -> QWidget:
-        
+    def embeddedWidget(self) -> QWidget:        
         pass
 
     #--------------------------------------------------------------------------
-    def resizable(self) -> bool:
+    def nodeStyle(self):
+        return self._nodeStyle
 
+    #--------------------------------------------------------------------------
+    def setNodeStyle(self, style):
+        self._nodeStyle = style
+        
+    #--------------------------------------------------------------------------
+    def resizable(self) -> bool:
         return False
 
     #--------------------------------------------------------------------------
     def validationState(self) -> NodeValidationState:
-
         return NodeValidationState.VALID
 
+    #--------------------------------------------------------------------------
+    def validationMessage(self):
+        return str('')
+
+    #--------------------------------------------------------------------------
+    def painterDelegate(self):
+        return None
+        
     #--------------------------------------------------------------------------
     #Signals
 
