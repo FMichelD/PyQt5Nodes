@@ -22,20 +22,17 @@ class ReactToConnectionState(Enum):
 #-----------------------------------------------------------------------------
 class NodeState(object):
 
-#    ConnectionPtrSet = dict() #unordered_map<QUuid, Connection>
-#    _inConnections = [ConnectionPtrSet] #vector<ConnectionPtrSet>
-#    _outConnections = [ConnectionPtrSet]
-
-
     def __init__(self, model: NodeDataModel):
-#        curframe = inspect.currentframe()
-#        calframe = inspect.getouterframes(curframe, 2)
-#        print('NodeState.py: __init__(...)')
-#        print('caller name: {} {}'.format(calframe[1][3], calframe[1][1]))
 
-        self._outConnections = [dict()] * model.nPorts(PortType.Out)
+        # create a list with one dict for each port of PortType, 
+        self._outConnections = []
+        for i in range(0, model.nPorts(PortType.Out)):
+            self._outConnections.append({})
 
-        self._inConnections = [dict()] * model.nPorts(PortType.In)
+        # create a list with one dict for each port of PortType, 
+        self._inConnections = []
+        for i in range(0, model.nPorts(PortType.Out)):
+            self._inConnections.append({})
 
         self._reaction = ReactToConnectionState.NOT_REACTING
 
@@ -62,27 +59,12 @@ class NodeState(object):
         connections = self.getEntries(portType)
 
         connections[portIndex].update({connection.id(): connection})
-#        connections[portIndex] = dict([(connection.id(), connection)])
 
     #-----------------------------------------------------------------------------
     def eraseConnection(self, portType: PortType, portIndex: PortIndex,
                         id: QUuid):
-#        curframe = inspect.currentframe()
-#        calframe = inspect.getouterframes(curframe, 2)
-#        print("\nNodeState: eraseConnection(self)")
-#        print('caller name:', calframe[1][3])
-#        print('on:', calframe[1][1])
-#        print('')
-        
-#        cgo = self.getEntries(portType)[portIndex].get(id).getConnectionGraphicsObject()
-#        conn = self.getEntries(portType)[portIndex].get(id)
         self.getEntries(portType)[portIndex].pop(id)
         
-#        cgo.__del__()
-#        conn.connectionGeometry().__del__()
-#        conn.__del__()
-#        cgo = None
-#        conn = None
     #-----------------------------------------------------------------------------
     def reaction(self):
         return self._reaction
@@ -99,10 +81,6 @@ class NodeState(object):
     def setReaction(self, reaction: ReactToConnectionState,
                     reactingPortType: PortType=PortType.No_One, 
                     reactingDataType: NodeDataType =NodeDataType()):
-#        curframe = inspect.currentframe()
-#        calframe = inspect.getouterframes(curframe, 2)
-#        print('\nNodeState.py: setReaction(...)')
-#        print('caller name: {} {}'.format(calframe[1][3], calframe[1][1]))
         
         self._reaction = reaction
 
@@ -112,7 +90,6 @@ class NodeState(object):
 
     #-----------------------------------------------------------------------------
     def isReacting(self) -> bool:
-#        self._reaction = ReactToConnectionState.REACTING        
         return self._reaction
 
     #-----------------------------------------------------------------------------
