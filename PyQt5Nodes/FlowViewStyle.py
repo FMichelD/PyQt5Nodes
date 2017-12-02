@@ -5,7 +5,7 @@
 from PyQt5.QtCore import  QFile, QIODevice,  QByteArray,  QJsonDocument,  QJsonValue
 from PyQt5.QtGui import  QColor
 
-#from resource import *
+from resource import *
 
 ##----------------------------------------------------------------------------
 class FlowViewStyle(object):
@@ -14,20 +14,23 @@ class FlowViewStyle(object):
     FineGridColor = QColor()
     CoarseGridColor = QColor()
     
-    def __init__(self,  jsonFilePath: str = "./DefaultStyle.json"):
-        
-            self.loadJsonFile(jsonFilePath)
+    def __init__(self, jsonFile: str="./DefaultStyle.json", jsonText: str=None  ):
+        self.loadJsonFile(jsonFile)
+
+        if(jsonText):
+            self.loadJsonText(jsonText)
         
     #-------------------------------------------------------------------------
     def loadJsonFile(self,  styleFile: str):
-        
-        self.jsonFile = QFile(styleFile)
-        
-        if(not self.jsonFile.open(QIODevice.ReadOnly)):
-            qWarning("Couldn't open file: {}".format(styleFile))
+        file = QFile(styleFile)
+
+        if(not file.open(QIODevice.ReadOnly)):
+
+            print("Couldn't open file: {}".format(styleFile))
+
             return
-        
-        self.loadJsonFromByteArray(self.jsonFile.readAll())
+
+        self.loadJsonFromByteArray(file.readAll())
         
     #-------------------------------------------------------------------------
     def setStyle(self,  jsonText: str):

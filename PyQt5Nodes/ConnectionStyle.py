@@ -5,8 +5,8 @@ from random import seed,  randrange
 
 from PyQt5.QtGui import  *
 
-from Style import *
-from StyleCollection import *
+from PyQt5Nodes.Style import *
+from PyQt5Nodes.StyleCollection import *
 
 ##----------------------------------------------------------------------------
 class ConnectionStyle(Style):

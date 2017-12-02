@@ -5,16 +5,16 @@ from PyQt5.QtWidgets import  *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
-from Node import *
-from NodeDataModel import *
-from NodeGraphicsObject import *
-from NodeStyle import *
+from PyQt5Nodes.Node import *
+from PyQt5Nodes.NodeDataModel import *
+from PyQt5Nodes.NodeGraphicsObject import *
+from PyQt5Nodes.NodeStyle import *
 
-from DataModelRegistry import *
-from PortType import *
+from PyQt5Nodes.DataModelRegistry import *
+from PyQt5Nodes.PortType import *
 
-from Connection import *
-from ConnectionGraphicsObject import *
+from PyQt5Nodes.Connection import *
+from PyQt5Nodes.ConnectionGraphicsObject import *
 
 
 class FlowScene(QGraphicsScene):

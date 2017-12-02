@@ -3,9 +3,9 @@
 
 from PyQt5.QtWidgets import QWidget
 
-from NodeData import *
-from NodeDataModel import *
-from PortType import *
+from PyQt5Nodes.NodeData import *
+from PyQt5Nodes.NodeDataModel import *
+from PyQt5Nodes.PortType import *
 
 class MyNodeData(NodeData):
     
@@ -42,7 +42,6 @@ class NaiveDataModel(NodeDataModel):
         self._caption = caption
 
     def caption(self) -> str:
-
         return self._caption
 
     #-------------------------------------------------------------------------
@@ -110,8 +109,11 @@ class NaiveDataModel(NodeDataModel):
 #-----------------------------------------------------------------------------
 class Otro(NodeDataModel):
     
+    def setCaption(self,  caption):
+        self._caption = caption
+
     def caption(self) -> str:
-        return "Otro"
+        return self._caption
 
     #-------------------------------------------------------------------------
     def name(self) -> str:

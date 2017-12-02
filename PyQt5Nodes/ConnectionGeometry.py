@@ -5,8 +5,8 @@ from inspect import currentframe, getframeinfo
 
 from PyQt5.QtCore import *
 
-from PortType import *
-from StyleCollection import *
+from PyQt5Nodes.PortType import *
+from PyQt5Nodes.StyleCollection import *
 
 ##----------------------------------------------------------------------------
 class ConnectionGeometry(object):

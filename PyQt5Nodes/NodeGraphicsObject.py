@@ -6,12 +6,12 @@ import inspect
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
-from FlowScene import *
-from NodeGeometry import *
-from NodeState import *
-from StyleCollection import *
-from NodePainter import *
-from NodeConnectionInteraction import *
+from PyQt5Nodes.FlowScene import *
+from PyQt5Nodes.NodeGeometry import *
+from PyQt5Nodes.NodeState import *
+from PyQt5Nodes.StyleCollection import *
+from PyQt5Nodes.NodePainter import *
+from PyQt5Nodes.NodeConnectionInteraction import *
 
 ##----------------------------------------------------------------------------
 class NodeGraphicsObject(QGraphicsObject):

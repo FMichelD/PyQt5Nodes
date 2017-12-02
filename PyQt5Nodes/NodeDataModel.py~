@@ -11,7 +11,8 @@ from PyQt5.QtCore import *
 from Serializable import *
 from NodeData import *
 from PortType import *
-from St
+from StyleCollection import *
+
 class NodeValidationState(Enum):
     ERROR = -1
     WARNING = 0

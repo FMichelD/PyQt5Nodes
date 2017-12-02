@@ -7,11 +7,11 @@ from enum import Enum
 #from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
-from PortType import *
-from NodeData import *
-from NodeDataModel import *
-from NodeState import *
-from Connection import *
+from PyQt5Nodes.PortType import *
+from PyQt5Nodes.NodeData import *
+from PyQt5Nodes.NodeDataModel import *
+from PyQt5Nodes.NodeState import *
+from PyQt5Nodes.Connection import *
 
 #-----------------------------------------------------------------------------
 class ReactToConnectionState(Enum):

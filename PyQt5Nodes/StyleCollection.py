@@ -6,9 +6,9 @@
 #from PyQt5.QtWidgets import  *
 #from DataModelRegistry import *
 
-from FlowViewStyle import FlowViewStyle
-from ConnectionStyle import ConnectionStyle
-from NodeStyle import NodeStyle
+from PyQt5Nodes.FlowViewStyle import FlowViewStyle
+from PyQt5Nodes.ConnectionStyle import ConnectionStyle
+from PyQt5Nodes.NodeStyle import NodeStyle
 
 ##----------------------------------------------------------------------------
 class StyleCollection(object):

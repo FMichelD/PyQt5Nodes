@@ -233,35 +233,35 @@ class NodePainter(object):
 
             entries = state.getEntries(portType)
 
-            if(any(entries)):
-                n = len(entries)
 
-                for i in range(0, n):
+            n = len(entries)
 
-                    p = geom.portScenePosition(i, portType)
+            for i in range(0, n):
 
-                    if(not entries[i]):
-                        painter.setPen(nodeStyle.FontColorFaded)
-                    else:
-                        painter.setPen(nodeStyle.FontColor)
+                p = geom.portScenePosition(i, portType)
 
-                    if(model.portCaptionVisible(portType, i)):
-                        s = model.portCaption(portType, i)
-                    else:
-                        s = model.dataType(portType, i).name
+                if(not entries[i]):
+                    painter.setPen(nodeStyle.FontColorFaded)
+                else:
+                    painter.setPen(nodeStyle.FontColor)
 
-                    rect = metrics.boundingRect(s)
+                if(model.portCaptionVisible(portType, i)):
+                    s = model.portCaption(portType, i)
+                else:
+                    s = model.dataType(portType, i).name
 
-                    p.setY(p.y() + rect.height() / 4.0)
+                rect = metrics.boundingRect(s)
 
-                    if(portType == PortType.In):
-                        p.setX(5.0)
-                    elif(portType == PortType.Out):
-                        p.setX(geom.width() - 5.0 -rect.width())
-                    else:
-                        pass
+                p.setY(p.y() + rect.height() / 4.0)
 
-                    painter.drawText(p, s)
+                if(portType == PortType.In):
+                    p.setX(5.0)
+                elif(portType == PortType.Out):
+                    p.setX(geom.width() - 5.0 -rect.width())
+                else:
+                    pass
+
+                painter.drawText(p, s)
 
         drawPoints(PortType.In)
         drawPoints(PortType.Out)

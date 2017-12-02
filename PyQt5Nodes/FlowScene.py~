@@ -1,293 +1,459 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python3
 
-from math import floor
-
+from PyQt5.QtWidgets import  *
 from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
-#from PyQt5.QtGui import  *
+from PyQt5.QtGui import *
+
+from PyQt5Nodes.Node import *
+from NodeDataModel import *
+from NodeGraphicsObject import *
+from NodeStyle import *
+
+from DataModelRegistry import *
+from PortType import *
+
+from Connection import *
+from ConnectionGraphicsObject import *
 
 
-from FlowScene import *
-from StyleCollection import *
+class FlowScene(QGraphicsScene):
+    def __init__(self, registry):
+        super(FlowScene,  self).__init__()
 
-class FlowView(QGraphicsView):
+        self._nodes = dict()
+        self._connections = dict()
+        self._registry = DataModelRegistry()
 
-    def __init__(self, scene=None,  parent: QWidget=None) :
-        super().__init__()
+        self.setItemIndexMethod(QGraphicsScene.NoIndex)
 
-#        self._clickPos = QPointF();
+        self._registry = registry
 
-        self.setDragMode(QGraphicsView.ScrollHandDrag)
-        self.setRenderHint(QPainter.Antialiasing)
+#-----------------------------------------------------------------------------
+    def __del__(self):
+        self.clearScene()
 
-        self.flowViewStyle = StyleCollection.flowViewStyle()
+#-----------------------------------------------------------------------------
+    def createConnection(self, *args):
+        signature = tuple(arg.__class__ for arg in args)
 
-        self.setBackgroundBrush(self.flowViewStyle.BackgroundColor)
+        typemap = { (PortType, Node, PortIndex) : self.createConnectionPtNPi,
+                (Node, PortIndex, Node, PortIndex) : self.createConnectionNPiNPi }
 
-        #self.setViewportUpdateMode(QGraphicsView.FullViewportUpdate);
-        #self.setViewportUpdateMode(QGraphicsView.MinimalViewportUpdate);
-        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff);
-        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff);
+        if signature in typemap:
+          return typemap[signature](*args)
+        else:
+          raise TypeError("Invalid type signature: {0}".format(signature))
 
-        self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse);
+#-----------------------------------------------------------------------------
+    def createConnectionPtNPi(self, connectedPort: PortType, node,
+                        portIndex: PortIndex):
+        connection = Connection(connectedPort, node, portIndex)
 
-        self.setCacheMode(QGraphicsView.CacheBackground);
+        cgo = ConnectionGraphicsObject(self, connection)
 
-        #self.setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
+        # after this function connection points to node port
+        connection.setGraphicsObject(cgo)
 
-        if(scene):
-            self.setScene(scene)
-    
-    #-------------------------------------------------------------------------
-    def clearSelectionAction(self) -> QAction:
-        return _clearSelectionAction
+        self._connections[connection.id()] = connection
 
-    #-------------------------------------------------------------------------
-    def deleteSelectionAction(self) -> QAction:
-        return _deleteSelectionAction
+        self.connectionCreated.emit(connection)
 
-    #--------------------------------------------------------------------------
-    def setScene(self, scene):
-        self._scene = scene
-        QGraphicsView.setScene(self, self._scene)
-    
-        """ setup actions """
-        self.__clearSelectionAction = QAction(("Clear Selection"), self)
-        self.__clearSelectionAction.setShortcut(Qt.Key_Escape)
-        self.__clearSelectionAction.triggered.connect(self._scene.clearSelection)
-        self.addAction(self.__clearSelectionAction);
+        return connection
 
-        self._deleteSelectionAction = QAction("Delete Selection",self)
-        self._deleteSelectionAction.setShortcut(Qt.Key_Delete)
-        self._deleteSelectionAction.triggered.connect(self.deleteSelectedNodes)
-        self.addAction(self._deleteSelectionAction)
-        
-    #--------------------------------------------------------------------------
-    def mousePressEvent(self,  event: QMouseEvent):
-        QGraphicsView.mousePressEvent(self, event);
+#-----------------------------------------------------------------------------
+    def createConnectionNPiNPi(self, nodeIn, portIndexIn: PortIndex,
+                                nodeOut, portIndexOut: PortIndex):
 
-        if(event.button() == Qt.LeftButton):
-            self._clickPos = self.mapToScene(event.pos())
+        connection = Connection(nodeIn, portIndexIn, nodeOut, portIndexOut)
 
-    #--------------------------------------------------------------------------
-    def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent):
-        QGraphicsView.mouseMoveEvent(self, event);
+        cgo = ConnectionGraphicsObject(connection)
 
-        if(self._scene.mouseGrabberItem() == None and event.buttons() == Qt.LeftButton):
-            if( not(event.modifiers() == Qt.ShiftModifier)):
-                difference = self._clickPos - self.mapToScene(event.pos())
-                self.setSceneRect(self.sceneRect().translated(difference.x(), difference.y()));
+        nodeIn.nodeState().setConnection(PortType.In, portIndexIn, connection)
+        nodeOut.nodeState().setConnection(PortType.Out, portIndexOut, connection)
 
-    #-------------------------------------------------------------------------
-    def contextMenuEvent(self, event: QContextMenuEvent):
+        # after this function connection points to node port
+        connection.setGraphicsObject(cgo)
 
-        self.modelMenu = QMenu(self)
+        # trigger data propagation
+        nodeOut.onDataUpadted(portIndexOut)
 
-        self.skipText = "skip me"
+        self._connections[connection.id()] = connection
 
-        txtBox = QLineEdit(self.modelMenu)
-        txtBox.setPlaceholderText("Filter")
-        txtBox.setClearButtonEnabled(True)
+        self.connectionCreated.emit(connection)
 
-        txtBoxAction = QWidgetAction(self.modelMenu)
-        txtBoxAction.setDefaultWidget(txtBox)
+        return connection
 
-        self.modelMenu.addAction(txtBoxAction)
+#-----------------------------------------------------------------------------
+    def restoreConnection(self, connectionJson):
 
-        treeView = QTreeWidget(self.modelMenu)
-        #treeView.header().close()
+        nodeInId = QUid(connectionJson["in_id"].toString())
+        nodeOutId = QUid(connectionJson["in_id"].toString())
 
-        treeViewAction = QWidgetAction(self.modelMenu)
-        treeViewAction.setDefaultWidget(treeView)
+        portIndexIn = connectionJson["in_index"].toInt()
+        portIndexOut = connectionJson["out_index"].toInt()
 
-        self.modelMenu.addAction(treeViewAction)
+        nodeIn = _nodes[nodeInId].get()
+        nodeOut = _nodes[nodeOutId].get()
 
-        self.topLevelItems = dict()
-        for cat in self._scene.registry().categories():
-            item = QTreeWidgetItem(treeView)
-            item.setText(0, cat)
-            item.setData(0, Qt.UserRole, self.skipText)
-            self.topLevelItems[cat] = item
+        return createConnection(nodeIn, portIndexIn, nodeOut, portIndexOut)
 
-        registeredModel = self._scene.registry().registeredModelsCategoryAssociation()
-        for assoc in registeredModel:
-            parent = self.topLevelItems[registeredModel[assoc]]
-            item = QTreeWidgetItem(parent)
-            item.setText(0, assoc);
-            item.setData(0, Qt.UserRole, assoc)
+#-----------------------------------------------------------------------------
+    def deleteConnection(self, connection: Connection):
+        self.connectionDeleted.emit(connection)
+        connection.removeFromNodes()
+        self._connections.pop(connection.id())
 
-        treeView.expandAll()
+        cgo = connection.getConnectionGraphicsObject()
+        cgo.__del__()
 
-        #---------------------------------------------------------------------
-        def insertItemAsNode(item: QTreeWidgetItem, column: int):
+#-----------------------------------------------------------------------------
+    def createNode(self, dataModel: NodeDataModel):
+        node = Node(dataModel)
+        ngo = NodeGraphicsObject(self, node)
+        node.setGraphicsObject(ngo)
 
-            self.modelMenu.close()
+        self._nodes[node.id()] = node
 
-            modelName = item.data(0, Qt.UserRole)
+        self.nodeCreated.emit(node)
 
-            if(modelName == self.skipText):
-                return
+        return node
 
-            typeNode = self._scene.registry().create(modelName)
+#-----------------------------------------------------------------------------
+    def restoreNode(self, nodeJson: dict):
+        modelName = nodeJson["model"].toObject()["name"].toString()
 
-            if(not typeNode is None):
-                node = self._scene.createNode(typeNode)
+        dataModel = registry().create(modelName)
 
-                pos = event.pos()
+        if(not dataModel):
+            raise ReferenceError("No registered model with name {}".format(
+                    modelName.toLocal8Bit().data()))
 
-                posView= self.mapToScene(pos)
+        node = Node(dataModel)
+        ngo = NodeGraphicsObject(self, node)
+        node.setGraphicsObject(ngo)
 
-                node.nodeGraphicsObject().setPos(posView)
-            else:
-                qDebug() << "Model not found"
+        node.restore(nodeJson)
 
-        #---------------------------------------------------------------------
+        self._nodes[node.id()] = node
 
-        treeView.itemActivated.connect(insertItemAsNode)
+        self.nodeCreated.emit(node)
 
-        txtBox.textChanged.connect(self.filtering)
+        return node
 
-        txtBox.setFocus()
+    #-----------------------------------------------------------------------------
+    def removeNode(self, node):
 
-        self.modelMenu.exec(event.globalPos())
+        # call signal
+        self.nodeDeleted.emit(node)
 
-    #-------------------------------------------------------------------------
-    def filtering(self, text: str):
+        #-----------------------------------------------------------------------------
+        def deleteConnections(portType: PortType):
+            nodeState = node.nodeState()
+            nodeEntries = nodeState.getEntries(portType)
 
-        for topLvlItem in self.topLevelItems:
-            for i in range(0, topLvlItem.childCount()):
-                child = topLvlItem.child(i)
+            for connection in nodeEntries:
+                for id, conn in connection.items():
+                    self.deleteConnection(conn)
+                    break
 
-                modelName = child.data(0, Qt.UserRole)
 
-                if(modelName.contains(text, Qt.CaseInsensitive)):
-                    child.setHidden(False)
-                else:
-                    child.setHidden(True)
+        deleteConnections(PortType.In)
+        deleteConnections(PortType.Out)
 
-    #-------------------------------------------------------------------------
-    def wheelEvent(self, event: QWheelEvent):
+        nd = self._nodes.get(node.id())
+        ngo = nd.nodeGraphicsObject()
 
-        delta = event.angleDelta()
+        self._nodes.pop(node.id())
+        ngo.__del__()
 
-        if(delta.y() == 0):
-            event.ignore()
+#-----------------------------------------------------------------------------
+    def registry(self) -> DataModelRegistry:
+        return self._registry
+
+#-----------------------------------------------------------------------------
+    def setRegistry(self, registry: DataModelRegistry):
+        self._registry = registry
+
+#-----------------------------------------------------------------------------
+    def iterateOverNodes(self, visitor):
+        for node in self._nodes:
+            visitor(node.second.get())
+
+#-----------------------------------------------------------------------------
+    def iterateOverNodeData(self, visitor: NodeDataModel):
+        for node in self._nodes:
+            visitor(node.second.NodeDataModel())
+
+#-----------------------------------------------------------------------------
+    def iterateOverDataDependentOrder(self, visitor: NodeDataModel):
+        visiteNodesSet = []
+
+        #-----------------------------------------------------------------------------
+        # A leaf node is a node with no input ports, or all possible input ports empty
+        def isNodeLeaf(node, model: NodeDataModel):
+
+            for i in range(0, model.nPorts(PortType.In)):
+                connections = node.nodeState().connections(PortType.In, i)
+
+                if(not connections.empty()):
+                    return False
+
+                return True
+
+        # iterate over "leaf" nodes
+        for self._node in self._nodes:
+            node = self._node.second
+            model = node.nodeDataModel
+
+            if( self.isNodeLeaf(node, model)):
+                visitor(model)
+                visiteNodesSet.insert(node.id())
+
+        #-----------------------------------------------------------------------------
+        def areNodeInputVisitedBefore(node, model: NodeDataModel):
+
+            for i in range(0, model.nPorts(PortType.In)):
+                connections = node.nodeState().connections(PortType.In, i)
+
+                for conn in connections:
+                    if(visiteNodesSet.find(conn.second.getNode(PortType.Out).id()) ==
+                        visiteNodesSet.end()):
+                        return False
+
+                return True
+
+        while(self._nodes.size() != visiteNodesSet.size()):
+            for self._node in self._nodes:
+                node = self._node.second
+
+                if(visiteNodesSet.find(node.id()) != visiteNodesSet.end()):
+                    continue
+
+                model = node.nodeDataModel()
+
+                if(areNodeInputVisitedBefore(node, model)):
+                    visitor(model)
+                    visiteNodesSet.insert(node.id())
+
+#-----------------------------------------------------------------------------
+    def getNodePosition(self, node) -> QPointF:
+        return node.nodeGraphicsObject().pos()
+
+#-----------------------------------------------------------------------------
+    def setNodePositon(self, node, pos: QPointF):
+        node.nodeGraphicsObject().setPos()
+        node.nodeGraphicsObject().moveConnections()
+
+#-----------------------------------------------------------------------------
+    def getNodeSize(self, node) -> QSizeF:
+        return QSizeF(node.nodeGEometry().width(), node.nodeGEometry().height())
+
+#-----------------------------------------------------------------------------
+    def nodes(self):
+        return self._nodes
+
+#-----------------------------------------------------------------------------
+    def connections(self) -> Connection:
+        return self._connections
+
+#-----------------------------------------------------------------------------
+    def selectNodes(self) -> list:
+        graphicsItems = selectedItems()
+
+        ret = []
+
+        for item in graphicsItems:
+            ngo = item
+
+            if(not ngo is None):
+                ret.append(ngo.node())
+
+        return ret
+
+#-----------------------------------------------------------------------------
+    def clearScene(self):
+        # Manual node cleanup. Simply clearing the holding datastructures doesn't work, the code crashes when
+        # there are both nodes and connections in the scene. (The data propagation internal logic tries to propagate
+        # data through already freed connections.)
+        nodesToDelete = []
+
+        for node in self._nodes:
+            nodesToDelete.append(node.second.get())
+
+        for node in nodesToDelete:
+            self.removeNode(node)
+#
+#    def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent):
+#        #print("mouse on scene")
+#-----------------------------------------------------------------------------
+    def save(self):
+        fileName = QFileDialog.getSaveFileName(None, "Open Flow Scene",
+                                                QDir.homePath(),
+                                                "Flow Scene Files (*.flow)")
+
+        if(not fileName.isEmpty()):
+            if(not fileName.endWith("flow", Qt.CaseInsensitive)):
+                fileName += ".flow"
+
+            file = QFile(fileName)
+
+            if(file.open(QIODevice.WriteOnly)):
+                file.write(saveToMemory())
+
+#-----------------------------------------------------------------------------
+    def load(self):
+
+        self.clearScene()
+
+        fileName = QFileDialog.getOpenFileName(None,
+                                                "Open Flow Scene",
+                                                QDir.homePath(),
+                                                "Flow Scene Files (*.flow)")
+
+        if(not QFileInfo.exists(fileName)):
             return
 
-        d = delta.y() / abs(delta.y())
+        file = QFile(fileName)
 
-        if(d > 0.0):
-            self.scaleUp()
-        else:
-            self.scaleDown()
+        if(not file.open(QIODevice.ReadOnly)):
+            return
+
+        wholeFile = file.readAll()
+
+        self.loadFromMemory(wholeFile)
+
+#-----------------------------------------------------------------------------
+    def saveToMemory(self) -> QByteArray:
+
+        sceneJson = QJsonObject()
+
+        nodesJsonArray = QJsonArray()
+
+
+        for pair in self._nodes:
+            node = pair.second;
+
+            nodesJsonArray.append(node.save())
+
+        sceneJson["nodes"] = nodesJsonArray
+
+        connectionJsonArray = QJsonArray();
+
+        for pair in self._connections:
+            connection = pair.second
+
+            connectionJson = connection.save()
+
+            if(not connectionJson.isEmpty()):
+                connectionJsonArray.append(connectionJson)
+
+        sceneJson["connections"] = connectionJsonArray
+
+        document = QJsonObject(sceneJson)
+
+        return document.toJson()
+
+#-----------------------------------------------------------------------------
+    def loadFromMemory(self, data: QByteArray):
+
+        jsonDocument = QJsonDocument.fromJson(data).object()
+
+        nodesJsonArray = jsonDocument["nodes"].toArray()
+
+        for i in range(0, nodesJsonArray.size()):
+            self.restoreNode(nodesJsonArray[i].toObject())
+
+        connectionJsonArray = jsonDocument["connections"].toArray()
+
+        for i in range(0, connectionJsonArray.size()):
+            self.restoreConnection(connectionJsonArray[i]).toObject
+
+#-----------------------------------------------------------------------------
+    def locateNodeAt(self, scenePoint: QPointF, scene,
+                     viewTransform: QTransform):
+
+        items = list(scene.items(scenePoint, Qt.IntersectsItemShape,
+                     Qt.DescendingOrder, viewTransform))
+
+        filteredItems = list()
+        for item in items:
+            if(isinstance(item, NodeGraphicsObject)):
+                filteredItems.append(item)
+
+#        std::copy_if(items.begin(),
+#            items.end(),
+#            std::back_inserter(filteredItems),
+#            [] (QGraphicsItem * item)
+#            {
+#              return (dynamic_cast<NodeGraphicsObject*>(item) != nullptr);
+#            });
+
+#        resultNode = None
+
+        if(filteredItems): #if list not is empty then ...
+            graphicsItem = next(iter(filteredItems))
+
+#            ngo = NodeGraphicsObject(graphicsItem)
+#
+#            resultNode = ngo.node()
+#
+#        return resultNode
+
+            return graphicsItem.node()
+#-----------------------------------------------------------------------------
+#    def itemNotIsNone(self, item):
+#
+#        if(not item is Node):
+#            return item
 
     #-------------------------------------------------------------------------
-    def keyPressEvent(self, event: QKeyEvent):
+    #Signals
 
-        if(event.key() == Qt.Key_Shift):
+    nodeCreated = pyqtSignal(Node)
 
-            self.setDragMode(QGraphicsView.RubberBandDrag)
+    nodeDeleted = pyqtSignal(Node)
 
-        QGraphicsView.keyPressEvent(self, event)
+    connectionCreated = pyqtSignal(Connection)
 
-    #-------------------------------------------------------------------------
-    def keyReleaseEvent(self, event: QKeyEvent):
+    connectionDeleted = pyqtSignal(Connection)
 
-        if(event.key() == Qt.Key_Shift):
+    nodeMoved = pyqtSignal(Node, QPointF)
 
-            self.setDragMode(QGraphicsView.ScrollHandDrag)
+    nodeDoubleClicked = pyqtSignal(Node)
 
-        QGraphicsView.keyReleaseEvent(self, event)
+    connectionHovered = pyqtSignal(Connection, QPoint)
 
-    #-------------------------------------------------------------------------
-    def drawBackground(self, painter: QPainter, r: QRectF):
+    nodeHovered = pyqtSignal(Node, QPoint)
 
-        QGraphicsView.drawBackground(self, painter, r)
+    connectionHoverLeft = pyqtSignal(Connection)
 
-        flowViewStyle = StyleCollection.flowViewStyle()
-        bBrush = self.backgroundBrush()
-
-        painter.fillRect(r,  bBrush)
-
-        pen = QPen(flowViewStyle.FineGridColor)
-        pen.setWidth(3)
-        painter.setPen(pen)
-        self.drawGrid(200,  painter)
-
-        pen = QPen(flowViewStyle.CoarseGridColor, 1.0)
-        pen.setWidth(0)
-        painter.setPen(pen)
-        self.drawGrid(20, painter)
-
-    #-------------------------------------------------------------------------
-    def  drawGrid (self,  gridStep: int,  painter: QPainter):
-
-            windowRect = self.rect()
-            tl = self.mapToScene(windowRect.topLeft())
-            br = self.mapToScene(windowRect.bottomRight())
-
-            left   = floor(tl.x() / gridStep - 0.5);
-            right  = floor(br.x() / gridStep + 1.0);
-            bottom = floor(tl.y() / gridStep - 0.5);
-            top    = floor (br.y() / gridStep + 1.0);
-
-            #Vertical lines
-            for xi in range(int(left), int(right) + 1):
-                line = QLineF(xi * gridStep, bottom * gridStep,
-                            xi * gridStep, top * gridStep )
-                painter.drawLine(line)
-
-            #Horizontal lines
-            for yi in range(int(bottom), int(top) + 1):
-                line = QLineF(left * gridStep, yi * gridStep,
-                            right * gridStep, yi * gridStep)
-                painter.drawLine(line)
-
-    #-------------------------------------------------------------------------
-    def showEvent(self, event: QShowEvent):
-        self._scene.setSceneRect(self.sceneRect())
-        QGraphicsView.showEvent(self, event);
-
-    #-------------------------------------------------------------------------
-    def scene(self):
-        return self._secne
+    nodeHoverLeft = pyqtSignal(Node)
 
     #-------------------------------------------------------------------------
     #Slots
-    @pyqtSlot()
-    def scaleUp(self):
-        step = 1.2
-        factor = step**1.0
+    @pyqtSlot(Node,  QPointF)
+    def moveNode(self, node,  pos):
+        self.nodeMoved.emit(node,  pos)
+#-----------------------------------------------------------------------------
 
-        t = self.transform()
-
-        if(t.m11() > 2.0):
-            return
-
-        self.scale(factor, factor)
-
-    @pyqtSlot()
-    def scaleDown(self):
-        step = 1.2
-        factor = step**(-1.0)
-
-        t = self.transform()
-
-        if(t.m11() < 0.3):
-            return
-
-        self.scale(factor, factor)
-
-    @pyqtSlot()
-    def deleteSelectedNodes(self):
-        # delete the nodes, this will delete many of the connections
-        for item in self._scene.selectedItems():
-            if(isinstance(item,  NodeGraphicsObject)):
-                self._scene.removeNode(item.node())
-
-            if(isinstance(item, ConnectionGraphicsObject)):
-                self._scene.deleteConnection(item.connection())
-
-##############################################################################
-
+################################################################################
+#if __name__ == "__main__":
+#    from DataModelRegistry import *
+#    from models import *
+#
+#    def registerDataModels():
+#
+#        ret = DataModelRegistry()
+#
+#        ret.registerModel(NaiveDataModel())
+#
+#        #print("registrando")
+#
+#        return ret
+#
+#    f = FlowScene(registerDataModels())
+#
+#    n = f.createNodes()
+#
+#    #print(type(n))

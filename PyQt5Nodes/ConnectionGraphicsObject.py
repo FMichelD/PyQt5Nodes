@@ -6,19 +6,19 @@ from PyQt5.QtWidgets import *
 
 from enum import Enum
 
-from FlowScene import *
+from PyQt5Nodes.FlowScene import *
 
-from Connection import *
-from ConnectionGeometry import *
-from ConnectionPainter import *
-from ConnectionState import *
-from ConnectionBlurEffect import *
+from PyQt5Nodes.Connection import *
+from PyQt5Nodes.ConnectionGeometry import *
+from PyQt5Nodes.ConnectionPainter import *
+from PyQt5Nodes.ConnectionState import *
+from PyQt5Nodes.ConnectionBlurEffect import *
 
-from Node import *
-from NodeGraphicsObject import *
-from NodeConnectionInteraction import *
+from PyQt5Nodes.Node import *
+from PyQt5Nodes.NodeGraphicsObject import *
+from PyQt5Nodes.NodeConnectionInteraction import *
 
-from PortType import *
+from PyQt5Nodes.PortType import *
 
 ##----------------------------------------------------------------------------
 class ConnectionGraphicsObject(QGraphicsObject):

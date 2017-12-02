@@ -3,12 +3,16 @@
 
 from PyQt5.QtCore import QObject, QUuid, pyqtSignal
 
-from Serializable import *
-from PortType import *
-from ConnectionGeometry import *
-from ConnectionState import *
-from NodeGraphicsObject import *
-from ConnectionGraphicsObject import *
+from PyQt5Nodes.Serializable import *
+from PyQt5Nodes.PortType import *
+from PyQt5Nodes.ConnectionGeometry import *
+from PyQt5Nodes.ConnectionState import *
+from PyQt5Nodes.NodeGraphicsObject import *
+from PyQt5Nodes.ConnectionGraphicsObject import *
+
+import PyQt5Nodes.Node
+from PyQt5Nodes.Node import *
+
 
 ##----------------------------------------------------------------------------
 class Connection(QObject, Serializable):
@@ -26,8 +30,8 @@ class Connection(QObject, Serializable):
         # method overload
         signature = tuple(arg.__class__ for arg in args)
 
-        import Node
-        NodeCls = Node.Node
+        from PyQt5Nodes.Node import Node
+        NodeCls = PyQt5Nodes.Node
 
         typemap = {(PortType, NodeCls, PortIndex) : self.connectionPorts,
                     (Node, PortIndex, NodeCls, PortIndex) : self.connectionNodes }

@@ -6,18 +6,18 @@ import logging
 #from PyQt5.QtWidgets import *
 from PyQt5.QtCore import QObject
 
-#from Node import *
-from PortType import *
-#from FlowScene import *
-from NodeState import *
-from NodeGeometry import *
-from NodeData import *
-from NodeGraphicsObject import *
-from NodeDataModel import *
-#from ConnectionGraphicsObject import *
-#from ConnectionState import *
-from Serializable import *
-from StyleCollection import *
+#from PyQt5Nodes.Node import *
+from PyQt5Nodes.PortType import *
+#from PyQt5Nodes.FlowScene import *
+from PyQt5Nodes.NodeState import *
+from PyQt5Nodes.NodeGeometry import *
+from PyQt5Nodes.NodeData import *
+from PyQt5Nodes.NodeGraphicsObject import *
+from PyQt5Nodes.NodeDataModel import *
+#from PyQt5Nodes.ConnectionGraphicsObject import *
+#from PyQt5Nodes.ConnectionState import *
+from PyQt5Nodes.Serializable import *
+from PyQt5Nodes.StyleCollection import *
 
 class Node(QObject, Serializable):
     def __init__(self, dataModel: NodeDataModel):

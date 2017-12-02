@@ -3,9 +3,9 @@
 
 from PyQt5.QtCore import *
 
-from FlowScene import *
-from Node import *
-from PortType import *
+from PyQt5Nodes.FlowScene import *
+from PyQt5Nodes.Node import *
+from PyQt5Nodes.PortType import *
 
 ##----------------------------------------------------------------------------
 class ConnectionState(object):

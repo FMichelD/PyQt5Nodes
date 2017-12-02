@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import *
 #from PyQt5.QtGui import  *
 
 
-from FlowScene import *
+from PyQt5Nodes.FlowScene import *
 from StyleCollection import *
 
 class FlowView(QGraphicsView):
@@ -37,7 +37,7 @@ class FlowView(QGraphicsView):
         if(scene):
             self.setScene(scene)
             
-                    """ setup actions """
+        """ setup actions """
         self.__clearSelectionAction = QAction(("Clear Selection"), self)
         self.__clearSelectionAction.setShortcut(Qt.Key_Escape)
         self.__clearSelectionAction.triggered.connect(self._scene.clearSelection)

@@ -4,13 +4,13 @@
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
-from ConnectionGeometry import *
-from ConnectionState import *
-from Connection import *
-from ConnectionGraphicsObject import *
+from PyQt5Nodes.ConnectionGeometry import *
+from PyQt5Nodes.ConnectionState import *
+from PyQt5Nodes.Connection import *
+from PyQt5Nodes.ConnectionGraphicsObject import *
 
-from NodeData import *
-from StyleCollection import *
+from PyQt5Nodes.NodeData import *
+from PyQt5Nodes.StyleCollection import *
 
 
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python3
 
-from NodeDataModel import *
+from PyQt5Nodes.NodeDataModel import *
 #from NodeData import *
 
 class DataModelRegistry(object):

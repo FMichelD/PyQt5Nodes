@@ -8,8 +8,8 @@ from PyQt5.QtWidgets import *
 #from PyQt5.QtGui import  *
 
 
-from FlowScene import *
-from StyleCollection import *
+from PyQt5Nodes.FlowScene import *
+from PyQt5Nodes.StyleCollection import *
 
 class FlowView(QGraphicsView):
 

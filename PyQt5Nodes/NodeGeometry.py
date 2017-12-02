@@ -7,10 +7,10 @@ import math
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-from PortType import *
-from NodeDataModel import *
-from Node import *
-from StyleCollection import *
+from PyQt5Nodes.PortType import *
+from PyQt5Nodes.NodeDataModel import *
+from PyQt5Nodes.Node import *
+from PyQt5Nodes.StyleCollection import *
 
 #-----------------------------------------------------------------------------
 class NodeGeometry(object):

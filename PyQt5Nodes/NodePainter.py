@@ -6,13 +6,13 @@ import inspect
 
 from PyQt5.QtGui import  *
 
-from Node import *
-from FlowScene import *
-from NodeGraphicsObject import *
-from NodeGeometry import *
-from NodeDataModel import *
-from NodeState import *
-from StyleCollection import *
+from PyQt5Nodes.Node import *
+from PyQt5Nodes.FlowScene import *
+from PyQt5Nodes.NodeGraphicsObject import *
+from PyQt5Nodes.NodeGeometry import *
+from PyQt5Nodes.NodeDataModel import *
+from PyQt5Nodes.NodeState import *
+from PyQt5Nodes.StyleCollection import *
 
 ##----------------------------------------------------------------------------
 class NodePainter(object):

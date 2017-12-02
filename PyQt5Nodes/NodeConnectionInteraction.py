@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python3
 
-from Node import *
-from Connection import *
-from DataModelRegistry import *
-from NodeDataModel import *
+from PyQt5Nodes.Node import *
+from PyQt5Nodes.Connection import *
+from PyQt5Nodes.DataModelRegistry import *
+from PyQt5Nodes.NodeDataModel import *
 
 
 # /// Class performs various operations on the Node and Connection pair.

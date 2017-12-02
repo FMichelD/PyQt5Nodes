@@ -1,18 +1,14 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python3
 
-import logging
-#logging.basicConfig(level=logging.DEBUG)
-logging.basicConfig(level=logging.CRITICAL)
-
-import sys
-#import typing
-
 from PyQt5.QtWidgets import  QApplication
 
-from FlowView import *
-from FlowScene import *
-from DataModelRegistry import *
+import sys
+sys.path.insert(0, '/home/fmicheld/Workspace/PyQt/PyQt5Nodes/')
+
+from PyQt5Nodes.FlowView import *
+from PyQt5Nodes.FlowScene import *
+from PyQt5Nodes.DataModelRegistry import *
 
 from models import *
 

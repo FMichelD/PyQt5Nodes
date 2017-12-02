@@ -8,10 +8,10 @@ from enum import Enum
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
-from Serializable import *
-from NodeData import *
-from PortType import *
-from StyleCollection import *
+from PyQt5Nodes.Serializable import *
+from PyQt5Nodes.NodeData import *
+from PyQt5Nodes.PortType import *
+from PyQt5Nodes.StyleCollection import *
 
 class NodeValidationState(Enum):
     ERROR = -1

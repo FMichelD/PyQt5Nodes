@@ -4,17 +4,17 @@
 from PyQt5.QtGui import  *
 from PyQt5.QtCore import *
 
-from Style import *
-#from StyleCollection import *
-
+from PyQt5Nodes.Style import *
+#from PyQt5Nodes.StyleCollection import *
+#from PyQt5Nodes.resources import *
 ##----------------------------------------------------------------------------
 class NodeStyle(Style):
 
-    def __init__(self, jsonText: str="./DefaultStyle.json"):
-        
-        #initResoureces()
+    def __init__(self, jsonFile: str="./DefaultStyle.json", jsonText: str=None  ):
+        self.loadJsonFile(jsonFile)
 
-        self.loadJsonFile(jsonText)
+        if(jsonText):
+            self.loadJsonText(jsonText)
 
     #-------------------------------------------------------------------------
     def setNodeSyle(self, jsonText: str):
@@ -65,9 +65,7 @@ class NodeStyle(Style):
         file = QFile(styleFile)
         
         if(not file.open(QIODevice.ReadOnly)):
-
-            qWarning("Couldn't open file: {}".format(styleFile))
-
+            print("Couldn't open file: {}".format(styleFile))
             return
 
         self.loadJsonFromByteArray(file.readAll())
