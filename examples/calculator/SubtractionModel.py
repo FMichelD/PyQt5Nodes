@@ -11,7 +11,7 @@ from PyQt5Node.NodeDataModel import *
 from MathOperationDataModel import *
 from DecimalData import *
 
-class Subtraction(MathOperationDataModel):
+class SubtractionModel(MathOperationDataModel):
     def __init__(self):
         super().__init__(self)
     
