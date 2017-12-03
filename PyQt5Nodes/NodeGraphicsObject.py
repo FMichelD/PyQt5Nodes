@@ -207,7 +207,7 @@ class NodeGraphicsObject(QGraphicsObject):
                 else:
                     outPolicy = self._node.nodeDataModel().portOutConnectionPolicy(portIndex)
                     if(connections and portToCheck == PortType.Out and
-                            outPolicy == NodeDataModel.ConnectionPolicy.One):
+                            outPolicy == ConnectionPolicy.One):
                         self._scene.deleteConnection(connections[k])
                         
                     connection = self._scene.createConnection(portToCheck,
