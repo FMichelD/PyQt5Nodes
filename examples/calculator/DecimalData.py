@@ -8,7 +8,7 @@ from PyQt5Nodes.NodeData import *
 
 class DecimalData(NodeData):
     def __init__(self,  number: float=0.0):
-        super().__init__(self)
+        super().__init__()
     
         self._number = number
         
@@ -25,4 +25,4 @@ class DecimalData(NodeData):
     
     #--------------------------------------------------------------------------
     def numberAsText(self):
-        return '{:.2f}'.format(self._number)
+        return '{:.2f}'.format(self._number.number())

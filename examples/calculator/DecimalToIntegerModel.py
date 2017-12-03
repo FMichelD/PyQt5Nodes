@@ -7,15 +7,15 @@ from PyQt5.QtWidgets import *
 
 import sys
 sys.path.insert(0, '/home/fmicheld/Workspace/PyQt/PyQt5Nodes/')
-from PyQt5Nodes.NodesDataModel import *
-from PyQt5Nodes.NodesData import *
+from PyQt5Nodes.NodeDataModel import *
+from PyQt5Nodes.NodeData import *
 from PyQt5Nodes.PortType import *
 
 from DecimalData import *
 from IntegerData import *
 
-class DecimalToIntegerModel(NodesDataModel):
-    def __init__(self):
+class DecimalToIntegerModel(NodeDataModel):
+    def __init__():
         self._decimal = DecimalData()
         self._integer = IntegerData()
         

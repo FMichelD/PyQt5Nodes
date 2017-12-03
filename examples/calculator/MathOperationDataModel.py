@@ -8,22 +8,22 @@ from PyQt5.QtWidgets import *
 
 import sys
 sys.path.insert(0, '/home/fmicheld/Workspace/PyQt/PyQt5Nodes/')
-from PyQt5Node.NodeDataModel import *
-from PyQt5Node.NodeData import *
-from PyQt5Node.PortType import *
+from PyQt5Nodes.NodeDataModel import *
+from PyQt5Nodes.NodeData import *
+from PyQt5Nodes.PortType import *
 
 from DecimalData import *
 
 class MathOperationDataModel(NodeDataModel):
     def __init__(self):
-        super().__init__(self)
+        super().__init__()
         
         self._number1 = DecimalData()
         self._number2 = DecimalData()
         
         self._result = DecimalData()
         
-        self.modelValidationState = NodeValidationState.Warning
+        self.modelValidationState = NodeValidationState.WARNING
         self.modelValidationError = "Missing or incorrect inputs"
         
     #--------------------------------------------------------------------------

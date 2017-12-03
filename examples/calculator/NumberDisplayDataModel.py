@@ -14,19 +14,21 @@ from DecimalData import *
 
 class NumberDisplayDataModel(NodeDataModel):
     def __init__(self):
-        super().__init__(self)
+        super().__init__()
         
-        self._label = QLable()
+        self._label = QLabel()
         self._label.setMargin(3)
         
-        self.modelValidationState = NodeValidationState.Warning
+        self.modelValidationState = NodeValidationState.WARNING
         self.modelValidationError = "Missing or incorrect inputs"
         
     #--------------------------------------------------------------------------
     #override
     def caption(self):
         return "Result"
-    
+        
+    def setCaption(self, caption:str):
+        self._caption = caption
     #--------------------------------------------------------------------------
     #override
     def captionVisible(self):
@@ -71,11 +73,11 @@ class NumberDisplayDataModel(NodeDataModel):
         numberData = DecimalData(nodeData)
         
         if(numberData):
-            self.modelValidationState = NodeValidationState.Valid
+            self.modelValidationState = NodeValidationState.VALID
             self.modelValidationError = ""
             self._label.setText(numberData.numberAsText())
         else:
-            self.modelValidationState = NodeValidationState.Warning
+            self.modelValidationState = NodeValidationState.WARNING
             self.modelValidationError = "Missing or incorrect inputs"
             self._label.clear()
             

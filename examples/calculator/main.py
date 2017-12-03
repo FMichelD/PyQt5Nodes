@@ -6,19 +6,40 @@ from PyQt5.QtWidgets import  QApplication
 import sys
 sys.path.insert(0, '/home/fmicheld/Workspace/PyQt/PyQt5Nodes/')
 
-from PyQt5Nodes.FlowView import *
+from PyQt5Nodes.NodeData import *
+from PyQt5Nodes.NodeDataModel import *
 from PyQt5Nodes.FlowScene import *
+from PyQt5Nodes.FlowView import *
+from PyQt5Nodes.ConnectionStyle import *
 from PyQt5Nodes.DataModelRegistry import *
 
-from models import *
+from NumberSourceDataModel import *
+from NumberDisplayDataModel import *
+from AdditionModel import *
+from SubtractionModel import *
+from MultiplicationModel import *
+from DivisionModel import *
+from ModuloModel import *
+from DecimalToIntegerModel import *
+from IntegerToDecimalModel import *
+
 
 #-------------------------------------------------------------------------------
 def registerDataModels() -> DataModelRegistry:
     
     ret = DataModelRegistry()
     
-    ret.registerModel(NaiveDataModel())
-    ret.registerModel(Otro())
+    ret.registerModel(NumberSourceDataModel())
+    ret.registerModel(NumberDisplayDataModel())
+    
+    ret.registerModel(AdditionModel())
+#    ret.registerModel(SubtractionModel("Operators"))
+#    ret.registerModel(MultiplicationModel("Operators"))
+#    ret.registerModel(DivisionModel("Operators"))
+#    ret.registerModel(ModuleModel("Operators"))
+#    
+#    ret.registerModel(DecimalToIntegerModel("Type converters"))
+#    ret.registerModel(IntegerToDecimalModel("Type converters"))
     
     return ret
 

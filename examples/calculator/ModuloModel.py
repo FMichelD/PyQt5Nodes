@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import *
 
 import sys
 sys.path.insert(0, '/home/fmicheld/Workspace/PyQt/PyQt5Nodes/')
-from PyQt5Node.NodeDataModel import *
+from PyQt5Nodes.NodeDataModel import *
 
 from MathOperationDataModel import *
 from DecimalData import *

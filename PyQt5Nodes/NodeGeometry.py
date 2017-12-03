@@ -182,9 +182,9 @@ class NodeGeometry(object):
             self._width =  max(self._width, self.captionWidth())
 
             if(self._dataModel.validationState() != NodeValidationState.VALID):
-                self._width = max(self._width. validationWidth())
+                self._width = max(self._width, self.validationWidth())
 
-                self._height = validationHeight() + self._spacing
+                self._height = self.validationHeight() + self._spacing
 
         elif(isinstance(font, QFont)):
 
@@ -283,7 +283,7 @@ class NodeGeometry(object):
             if(self._dataModel.validationState() != NodeValidationState.VALID):
                 return QPointF(self._spacing + self.portWidth(PortType.In),
                                 (self.captionHeight() + self._height -
-                                validationHeight - self._spacing - 
+                                self.validationHeight() - self._spacing - 
                                 w.height()) / 2.0)
 
             return QPointF(self._spacing + self.portWidth(PortType.In), 
@@ -316,7 +316,7 @@ class NodeGeometry(object):
         
         msg = self._dataModel.validationMessage()
 
-        return self._boldFontMetrics.boundingRect(msg).height
+        return self._boldFontMetrics.boundingRect(msg).height()
 
 #-----------------------------------------------------------------------------
     def validationWidth(self) -> int:

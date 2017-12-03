@@ -307,7 +307,7 @@ class NodePainter(object):
                 painter.setPen(p)
 
             # Drawing the validation message background
-            if(modelValidationState == NodeValidationState.Error):
+            if(modelValidationState == NodeValidationState.ERROR):
 
                 painter.setBrush(nodeStyle.ErrorColor)
 
@@ -320,9 +320,9 @@ class NodePainter(object):
             diam = nodeStyle.ConnectionPointDiameter
 
             boundary = QRectF(-diam,
-                                -diam + geom.height() - geom.validationHeigth(),
+                                -diam + geom.height() - geom.validationHeight(),
                                 2.0*diam + geom.width(),
-                                2.0*diam + geom.validationHeigth())
+                                2.0*diam + geom.validationHeight())
 
             painter.drawRoundedRect(boundary, radius, radius)
 
@@ -339,7 +339,7 @@ class NodePainter(object):
             rect = metrics.boundingRect(errorMsg)
 
             position = QPointF((geom.width() - rect.width())/2.0, 
-                    geom.height() - (geom.validationHeigth() - diam)/2.0)
+                    geom.height() - (geom.validationHeight() - diam)/2.0)
 
             painter.setFont(f)
             painter.setPen(nodeStyle.FontColor)

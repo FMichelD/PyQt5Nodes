@@ -91,11 +91,11 @@ class NodeGraphicsObject(QGraphicsObject):
 
             self._proxyWidget.setPos(geom.widgetPosition())
 
-            update()
+            self.update()
 
             self._proxyWidget.setOpacity(1.0)
 
-            self._proxyWidget.setFlag(QGraphicsItem.ItemIgnoreParentOpacity)
+            self._proxyWidget.setFlag(QGraphicsItem.ItemIgnoresParentOpacity)
 
     #-------------------------------------------------------------------------
     def boundingRect(self) -> QRectF:

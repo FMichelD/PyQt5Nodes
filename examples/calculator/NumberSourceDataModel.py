@@ -15,7 +15,7 @@ from DecimalData import *
 
 class NumberSourceDataModel(NodeDataModel):
     def __init__(self):
-        super().__init__(self)
+        super().__init__()
         
         self._number = DecimalData()
         
@@ -32,6 +32,8 @@ class NumberSourceDataModel(NodeDataModel):
     def caption(self):
         return "Number Source"
     
+    def setCaption(self, caption:str):
+        self._caption = caption
     #--------------------------------------------------------------------------
     #override
     def captionVisible(self):
@@ -74,7 +76,7 @@ class NumberSourceDataModel(NodeDataModel):
     #--------------------------------------------------------------------------
     #override
     def nPorts(self, portType:PortType):
-        result = 1
+        result = 0
         
         if(portType == PortType.In):
             result = 0
@@ -109,7 +111,7 @@ class NumberSourceDataModel(NodeDataModel):
         try:
             number = float(self._lineEdit.text())
             self._number = DecimalData(number)
-            dataUpdate.emit(0)
+#            dataUpdate.emit(0)
         except ValueError as e:
             dataInvalidated(0)
             print(e)

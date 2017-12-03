@@ -16,8 +16,8 @@ from PyQt5Nodes.Connection import *
 #-----------------------------------------------------------------------------
 class ReactToConnectionState(Enum):
 
-    REACTING = True
-    NOT_REACTING = False
+    REACTING = 1
+    NOT_REACTING = 0
 
 #-----------------------------------------------------------------------------
 class NodeState(object):
@@ -31,7 +31,7 @@ class NodeState(object):
 
         # create a list with one dict for each port of PortType, 
         self._inConnections = []
-        for i in range(0, model.nPorts(PortType.Out)):
+        for i in range(0, model.nPorts(PortType.In)):
             self._inConnections.append({})
 
         self._reaction = ReactToConnectionState.NOT_REACTING
