@@ -1,2 +1,8 @@
-src/__pycache__/
-src/*~
+PyQt5Nodes/.directory
+PyQt5Nodes/__pycache__/
+PyQt5Nodes/__pycache__/*
+PyQt5Nodes/*~
+PyQt5Nodes/*.py~
+examples/*/__pycache__/*
+examples/*/*.py~
+
