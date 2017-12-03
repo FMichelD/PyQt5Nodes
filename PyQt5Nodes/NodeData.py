@@ -6,13 +6,18 @@ from abc import abstractmethod
 #from PyQt5.QtWidgets import *
 #from PyQt5.QtCore import *
 
+
 class NodeDataType(object):
     id = str()
     name = str()
 
 #-----------------------------------------------------------------------------
 class NodeData(object):
-
+    
+    nodeDataType = NodeDataType()
+    id = nodeDataType.id
+    name = nodeDataType.id
+    
     @abstractmethod
     def sameType(self, nodeData) -> bool:
 

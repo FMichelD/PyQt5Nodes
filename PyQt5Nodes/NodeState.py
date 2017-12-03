@@ -59,7 +59,9 @@ class NodeState(object):
         connections = self.getEntries(portType)
 
         connections[portIndex].update({connection.id(): connection})
-
+        
+        if(portType == PortType.In):
+            print(connections)
     #-----------------------------------------------------------------------------
     def eraseConnection(self, portType: PortType, portIndex: PortIndex,
                         id: QUuid):

@@ -28,7 +28,6 @@ class ConnectionGraphicsObject(QGraphicsObject):
         self.QGType = QGraphicsObject.UserType + 1
 
         self._scene = scene
-
         self._connection = connection
 
         self._scene.addItem(self)
@@ -45,14 +44,6 @@ class ConnectionGraphicsObject(QGraphicsObject):
 
     #-------------------------------------------------------------------------
     def __del__(self):
-#        curframe = inspect.currentframe()
-#        calframe = inspect.getouterframes(curframe, 2)
-#        print("ConnectionGraphicsObject: __del__(self)")
-#        print('caller name:', calframe[1][3])
-#        print('on:', calframe[1][1])
-#        print('')
-#
-        print("Remove ConnectionGraphics from scene")
         self._scene.removeItem(self)
 
     #-------------------------------------------------------------------------

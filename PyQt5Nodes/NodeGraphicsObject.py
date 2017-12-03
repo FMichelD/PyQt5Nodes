@@ -170,7 +170,7 @@ class NodeGraphicsObject(QGraphicsObject):
 
         # Inner function -----------------------------------------------------
         def clickPort(portToCheck):
-#            #print("portClicked")
+
             nodeGeometry = self._node.nodeGeometry()
 
             # TODO not pass sceneTransform
@@ -180,12 +180,21 @@ class NodeGraphicsObject(QGraphicsObject):
 
             if(portIndex != INVALID):
                 nodeState = self._node.nodeState()
-
+                
                 #dict(QUuid, Connection)
                 connections = nodeState.connections(portToCheck, portIndex)
 
+                if(portToCheck == PortType.In):
+                    print("Node: {}".format(self._node.id()))
+#                    connections = self._node.nodeState().connections(portToCheck, portIndex)
+                    connections = self._node.nodeState().getEntries(portToCheck)[portIndex]
+                    
                 # start dragging existing connection
-                if(bool(connections) and portToCheck == PortType.In):
+#                print(connections)
+#                if(connections):
+#                    print(connections)
+                    
+                if(connections and portToCheck == PortType.In):
                     k = next(iter(connections))
 #                    #print("k: ", k)
                     conn = connections[k]
@@ -196,13 +205,20 @@ class NodeGraphicsObject(QGraphicsObject):
 
                 # initialize new Connection
                 else:
+                    outPolicy = self._node.nodeDataModel().portOutConnectionPolicy(portIndex)
+                    if(connections and portToCheck == PortType.Out and
+                            outPolicy == NodeDataModel.ConnectionPolicy.One):
+                        self._scene.deleteConnection(connections[k])
+                        
                     connection = self._scene.createConnection(portToCheck,
                                                                 self._node,
                                                                 portIndex)
-
+                    
+                    print(self._node.id())
                     self._node.nodeState().setConnection(portToCheck,
                                                             portIndex,
                                                             connection)
+                
 #                    #print("GrabMouse: ",  connection.getConnectionGraphicsObject())
                     connection.getConnectionGraphicsObject().grabMouse()
         # end inner function -------------------------------------------------
@@ -217,8 +233,11 @@ class NodeGraphicsObject(QGraphicsObject):
         if(geom.resizeRect().contains(QPoint(pos.x(), pos.y()))):
             state.setResizing(True)
 
-        event.accept()
-#        QGraphicsScene.mousePressEvent(self._scene,  event)
+        if (self._node.nodeDataModel().resizable() and
+          geom.resizeRect().contains(QPoint(pos.x(),
+                                            pos.y()))):
+            state.setResizing(true);
+
     #-------------------------------------------------------------------------
     def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent):
 

@@ -227,20 +227,12 @@ class NodeConnectionInteraction(object):
     #-------------------------------------------------------------------------
     #------------------ util functions below
     def connectionRequiredPort(self):
-#        curframe = inspect.currentframe()
-#        calframe = inspect.getouterframes(curframe, 2)
-#        #print("\nNodeConnectionInteraction.py:connectionRequiredPort \t")
-#        #print('called by:', calframe[1][3])
-#        #print('on:', calframe[1][1])
-#        #print('\n')
-
         state = self._connection.connectionState()
 
         return state.requiredPort()
 
     #-------------------------------------------------------------------------
     def connectionEndScenePosition(self,  portType: PortType):
-
         go = self._connection.getConnectionGraphicsObject()
 
         geometry = self._connection.connectionGeometry()
@@ -251,7 +243,6 @@ class NodeConnectionInteraction(object):
 
     #-------------------------------------------------------------------------
     def nodePortScenePosition(self, portType, portIndex):
-
         geom = self._node.nodeGeometry()
 
         p = geom.nodePortScenePosition(portIndex, portType)
@@ -262,7 +253,6 @@ class NodeConnectionInteraction(object):
 
     #-------------------------------------------------------------------------
     def nodePortIndexUnderScenePoint(self, portType, scenePoint):
-
         nodeGeom = self._node.nodeGeometry()
 
         sceneTransform = self._node.nodeGraphicsObject().sceneTransform()
@@ -273,9 +263,12 @@ class NodeConnectionInteraction(object):
 
     #-------------------------------------------------------------------------
     def nodePortIsEmpty(self, portType, portIndex):
-
         nodeState = self._node.nodeState()
 
         entries = nodeState.getEntries(portType)
+        
+        if(not entries[portIndex]):
+            return True
 
-        return (portType == PortType.Out) or (not entries[portIndex])
+        outPolicy = self._node.nodeDataModel().portOutConnectionPolicy(portIndex)
+        return (portType == PortType.Out and outPolicy == NodeDataModel.ConnectionPolicy.Many)
