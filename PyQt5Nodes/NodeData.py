@@ -8,8 +8,8 @@ from abc import abstractmethod
 
 
 class NodeDataType(object):
-    id = str()
-    name = str()
+    id = ""
+    name = ""
 
 #-----------------------------------------------------------------------------
 class NodeData(object):
