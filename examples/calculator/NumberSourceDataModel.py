@@ -111,7 +111,7 @@ class NumberSourceDataModel(NodeDataModel):
         try:
             number = float(self._lineEdit.text())
             self._number = DecimalData(number)
-#            dataUpdate.emit(0)
+            self.dataUpdated.emit(0, 0)
         except ValueError as e:
             dataInvalidated(0)
             print(e)

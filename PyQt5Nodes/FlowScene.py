@@ -76,7 +76,7 @@ class FlowScene(QGraphicsScene):
         connection.setGraphicsObject(cgo)
 
         # trigger data propagation
-        nodeOut.onDataUpadted(portIndexOut)
+        nodeOut.onDataUpdated(portIndexOut)
 
         self._connections[connection.id()] = connection
 

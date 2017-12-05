@@ -29,8 +29,8 @@ class NodeDataModel(QObject, Serializable):
     _portCaptionVisibility = False
 
     def __init__(self):
-        QObject.__init__(self)
-
+        super().__init__()
+        
         self._nodeStyle = StyleCollection.nodeStyle()
         
     #--------------------------------------------------------------------------
@@ -132,7 +132,7 @@ class NodeDataModel(QObject, Serializable):
     #--------------------------------------------------------------------------
     #Signals
 
-    dataUpdated = pyqtSignal(PortIndex)
+    dataUpdated = pyqtSignal(object, PortIndex)
 
     dataInvalidated = pyqtSignal(PortIndex)
 

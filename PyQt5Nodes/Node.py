@@ -21,7 +21,7 @@ from PyQt5Nodes.StyleCollection import *
 
 class Node(QObject, Serializable):
     def __init__(self, dataModel: NodeDataModel):
-        QObject.__init__(self)
+        super().__init__()
 
         self._id = QUuid.createUuid()
 
@@ -54,7 +54,7 @@ class Node(QObject, Serializable):
 
 #-----------------------------------------------------------------------------
     @pyqtSlot()
-    def onDataUpdated(self, index: PortIndex):
+    def onDataUpdated(self=None, index:PortIndex=0):
         nodeData = self._nodeDataModel.outData(index)
 
         connections = self._nodeState.connections(PortType.Out, index)
