@@ -54,6 +54,6 @@ class AdditionModel(MathOperationDataModel):
             self.modelValidationError = "Missing or incorrect inputs"
 #            self._result.reset()
             
-        dataUpdated.emit(outPortIndex)
+        self.dataUpdated.emit(self, outPortIndex)
         
         

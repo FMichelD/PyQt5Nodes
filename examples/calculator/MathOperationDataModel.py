@@ -48,16 +48,15 @@ class MathOperationDataModel(NodeDataModel):
         
     #--------------------------------------------------------------------------
     def outData(self, port: PortIndex):
-        return NodeData(self._result.number())
+        return self._result
     
     #--------------------------------------------------------------------------
     def setInData(self, data: NodeData,  portIndex: PortIndex):
-        numberData = DecimalData(data)
         
         if(portIndex == 0):
-            self._number1 = numberData
+            self._number1 = data
         else:
-            self._number2 = numberData
+            self._number2 = data
             
         self.compute()
     

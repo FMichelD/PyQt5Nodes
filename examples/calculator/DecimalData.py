@@ -7,7 +7,7 @@ from PyQt5Nodes.NodeDataModel import *
 from PyQt5Nodes.NodeData import *
 
 class DecimalData(NodeData):
-    def __init__(self,  number: float=0.0):
+    def __init__(self,  number:float=0.0):
         super().__init__()
     
         self._number = number
