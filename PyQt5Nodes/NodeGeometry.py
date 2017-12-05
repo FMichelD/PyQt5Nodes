@@ -135,15 +135,17 @@ class NodeGeometry(object):
 
         addon = 0.0
 
-        return QRectF(0 - addon, 0 - addon,
-                      self._entryWidth + 3*addon, self._entryHeight + 3*addon)
+        return QRectF(0 - addon,
+                        0 - addon,
+                        self._entryWidth + 2*addon,
+                        self._entryHeight + 2*addon)
 
 #-----------------------------------------------------------------------------
     def boundingRect(self) -> QRectF:
         
         nodeStyle = StyleCollection.nodeStyle()
 
-        addon = 8 * nodeStyle.ConnectionPointDiameter
+        addon = 2 * nodeStyle.ConnectionPointDiameter
 
         return QRectF(0 - addon, 0 - addon,
                       self._width + 2*addon, self._height + 2*addon)
@@ -163,10 +165,10 @@ class NodeGeometry(object):
         
             w = self._dataModel.embeddedWidget()
 
-            if(not w is None):
+            if(w):
                 self._height = max(self._height, w.height())
 
-            self._height += self.captionHeight()
+            self._height += (self.captionHeight())
 
             self._inputPortWidth = self.portWidth(PortType.In) 
 
@@ -184,8 +186,8 @@ class NodeGeometry(object):
             if(self._dataModel.validationState() != NodeValidationState.VALID):
                 self._width = max(self._width, self.validationWidth())
 
-                self._height = self.validationHeight() + self._spacing
-
+                self._height += 2.0 * self.validationHeight()
+                
         elif(isinstance(font, QFont)):
 
             fontMetrics = QFontMetrics(font)
@@ -268,7 +270,7 @@ class NodeGeometry(object):
     #-------------------------------------------------------------------------
     def resizeRect(self):
 
-        rectSize = 7
+        rectSize = 3
 
         return QRect(self._width - rectSize,
                     self._height - rectSize,
@@ -279,17 +281,17 @@ class NodeGeometry(object):
 
         w = self._dataModel.embeddedWidget()
 
-        if(not w is None):
+        if(w):
             if(self._dataModel.validationState() != NodeValidationState.VALID):
-                return QPointF(self._spacing + self.portWidth(PortType.In),
+                return  QPointF(self._spacing + self.portWidth(PortType.In),
                                 (self.captionHeight() + self._height -
                                 self.validationHeight() - self._spacing - 
                                 w.height()) / 2.0)
-
+                                
             return QPointF(self._spacing + self.portWidth(PortType.In), 
                             (self.captionHeight() + self._height - w.height()) / 2.0)
 
-        return QPointF()        
+        return QPointF()         
 
 #-----------------------------------------------------------------------------
     def captionHeight(self) -> int:

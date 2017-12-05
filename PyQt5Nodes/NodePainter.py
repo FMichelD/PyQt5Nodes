@@ -319,17 +319,22 @@ class NodePainter(object):
 
             diam = nodeStyle.ConnectionPointDiameter
 
+#            boundary = QRectF(-diam,
+#                                -diam + geom.height() + geom.validationHeight(),
+#                                2.0 * diam + geom.width(),
+#                                2.0 * diam + geom.validationHeight())
+                                
+
             boundary = QRectF(-diam,
-                                -diam + geom.height() - geom.validationHeight(),
-                                2.0*diam + geom.width(),
-                                2.0*diam + geom.validationHeight())
+                              geom.height() - geom.validationHeight(),
+                                2.0 * diam + geom.width(),
+                                2.0 * diam + geom.validationHeight())
 
             painter.drawRoundedRect(boundary, radius, radius)
 
             painter.setBrush(Qt.gray)
 
             # Drawing the validation message itself
-            #print("mensage erro nodepainter line:363")
             errorMsg = model.validationMessage()
 
             f = painter.font()
@@ -338,8 +343,11 @@ class NodePainter(object):
 
             rect = metrics.boundingRect(errorMsg)
 
+#            position = QPointF((geom.width() - rect.width())/2.0, 
+#                    geom.height() - (geom.validationHeight() - diam)/2.0)
+
             position = QPointF((geom.width() - rect.width())/2.0, 
-                    geom.height() - (geom.validationHeight() - diam)/2.0)
+                    (geom.height() - geom.validationHeight()/2.0) + rect.height())
 
             painter.setFont(f)
             painter.setPen(nodeStyle.FontColor)

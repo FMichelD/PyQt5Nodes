@@ -18,6 +18,9 @@ class NumberDisplayDataModel(NodeDataModel):
         
         self._label = QLabel()
         self._label.setMargin(3)
+#        self._label.setText("0.00000")
+        self._label.setMinimumSize(60,  21)
+#        print(self._label.sizeHint().width(),  self._label.sizeHint().height())
         
         self.modelValidationState = NodeValidationState.WARNING
         self.modelValidationError = "Missing or incorrect inputs"

@@ -25,8 +25,10 @@ class AdditionModel(MathOperationDataModel):
     #--------------------------------------------------------------------------
     def caption(self):
         return "Addition"
+        
     def setCaption(self, caption:str):
         self._caption = caption
+        
     #--------------------------------------------------------------------------
     def name(self):
         return "Addition"
@@ -50,7 +52,7 @@ class AdditionModel(MathOperationDataModel):
         else:
             self.modelValidationState = NodeValidationState.WARNING
             self.modelValidationError = "Missing or incorrect inputs"
-            self._result.reset()
+#            self._result.reset()
             
         dataUpdated.emit(outPortIndex)
         

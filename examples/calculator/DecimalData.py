@@ -19,10 +19,11 @@ class DecimalData(NodeData):
         NodeDataType.name = 'Decimal'
         
         return NodeDataType
+        
     #--------------------------------------------------------------------------
     def number(self):
         return self._number
     
     #--------------------------------------------------------------------------
     def numberAsText(self):
-        return '{:.2f}'.format(self._number.number())
+        return '{:f}'.format(self._number.number())

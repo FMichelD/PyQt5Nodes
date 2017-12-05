@@ -48,7 +48,7 @@ class MathOperationDataModel(NodeDataModel):
         
     #--------------------------------------------------------------------------
     def outData(self, port: PortIndex):
-        return NodeData(self._result)
+        return NodeData(self._result.number())
     
     #--------------------------------------------------------------------------
     def setInData(self, data: NodeData,  portIndex: PortIndex):
