@@ -103,7 +103,8 @@ class FlowScene(QGraphicsScene):
         self.connectionDeleted.emit(connection)
         connection.removeFromNodes()
         self._connections.pop(connection.id())
-
+        connection.__del__()
+        
         cgo = connection.getConnectionGraphicsObject()
         cgo.__del__()
 
