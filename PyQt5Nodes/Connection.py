@@ -74,9 +74,7 @@ class Connection(QObject, Serializable):
 
         if(self._outNode):
             self._outNode.nodeGraphicsObject().update()
-
-        print("Connection {} destructor".format(self._id))
-
+            
     #-------------------------------------------------------------------------
     def save(self) -> dict:
         connectionJson = dict()
