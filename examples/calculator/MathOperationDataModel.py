@@ -18,10 +18,10 @@ class MathOperationDataModel(NodeDataModel):
     def __init__(self):
         super().__init__()
         
-        self._number1 = DecimalData()
-        self._number2 = DecimalData()
+        self._number1 = None
+        self._number2 = None
         
-        self._result = DecimalData()
+        self._result = None
         
         self.modelValidationState = NodeValidationState.WARNING
         self.modelValidationError = "Missing or incorrect inputs"
