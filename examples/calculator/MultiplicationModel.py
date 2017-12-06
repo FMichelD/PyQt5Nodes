@@ -13,7 +13,7 @@ from DecimalData import *
 
 class MultiplicationModel(MathOperationDataModel):
     def __init__(self):
-        super().__init__(self)
+        super().__init__()
     
     #--------------------------------------------------------------------------
     def __del__(self):

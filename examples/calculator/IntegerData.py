@@ -8,7 +8,7 @@ from PyQt5Nodes.NodeData import *
 
 class IntegerData(NodeData):
     def __init__(self,  number:float=0.0):
-        super().__init__(self)
+        super().__init__()
         
         self._number = number
     

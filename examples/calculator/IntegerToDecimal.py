@@ -66,7 +66,7 @@ class IntegerToDecimalModel(NodeDataModel):
         if(portType == PortType.In):
             return IntegerData().type()
         
-        return DecimalData.type()
+        return DecimalData().type()
         
     #--------------------------------------------------------------------------
     #override

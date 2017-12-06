@@ -16,8 +16,8 @@ class IntegerToDecimalModel(NodeDataModel):
     def __init__(self):
         super().__init__()
         
-        self._decimal = DecimalData()
-        self._integer = IntegerData()
+        self._decimal = None
+        self._integer = None
         
     #--------------------------------------------------------------------------
     #override
@@ -66,7 +66,7 @@ class IntegerToDecimalModel(NodeDataModel):
         if(portType == PortType.In):
             return IntegerData().type()
         
-        return DecimalData.type()
+        return DecimalData().type()
         
     #--------------------------------------------------------------------------
     #override

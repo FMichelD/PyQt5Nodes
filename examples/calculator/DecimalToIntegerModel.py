@@ -15,7 +15,9 @@ from DecimalData import *
 from IntegerData import *
 
 class DecimalToIntegerModel(NodeDataModel):
-    def __init__():
+    def __init__(self):
+        super().__init__()
+        
         self._decimal = DecimalData()
         self._integer = IntegerData()
         
@@ -55,7 +57,7 @@ class DecimalToIntegerModel(NodeDataModel):
         
         if(portType == PortType.In):
             result = 1
-        elif(portIndex == PortType.Out):
+        elif(portType == PortType.Out):
             result = 1
         
         return result

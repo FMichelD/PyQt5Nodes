@@ -29,17 +29,17 @@ def registerDataModels() -> DataModelRegistry:
 
     ret = DataModelRegistry()
 
-    ret.registerModel(NumberSourceDataModel())
-    ret.registerModel(NumberDisplayDataModel())
+    ret.registerModel(NumberSourceDataModel(), category="Source")
+    ret.registerModel(NumberDisplayDataModel(), category="Display")
 
-    ret.registerModel(AdditionModel())
-#    ret.registerModel(SubtractionModel("Operators"))
-#    ret.registerModel(MultiplicationModel("Operators"))
-#    ret.registerModel(DivisionModel("Operators"))
-#    ret.registerModel(ModuleModel("Operators"))
-#
-#    ret.registerModel(DecimalToIntegerModel("Type converters"))
-#    ret.registerModel(IntegerToDecimalModel("Type converters"))
+    ret.registerModel(AdditionModel(), category="Operators")
+    ret.registerModel(SubtractionModel(), category="Operators")
+    ret.registerModel(MultiplicationModel(), category="Operators")
+    ret.registerModel(DivisionModel(), category="Operators")
+    ret.registerModel(ModuloModel(), category="Operators")
+
+    ret.registerModel(DecimalToIntegerModel(), TypeConverter=True, category="Type converters")
+    ret.registerModel(IntegerToDecimalModel(), TypeConverter=True, category="Type converters")
 
     return ret
 

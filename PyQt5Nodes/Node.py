@@ -37,7 +37,7 @@ class Node(QObject, Serializable):
 
         self._nodeDataModel.dataUpdated.connect(self.onDataUpdated)
 
-        self.nodeDataModel().setCaption(self.id().toString())
+#        self.nodeDataModel().setCaption(self.id().toString())
 
 #-----------------------------------------------------------------------------
     @pyqtSlot()

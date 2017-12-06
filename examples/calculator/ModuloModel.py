@@ -10,11 +10,19 @@ from PyQt5Nodes.NodeDataModel import *
 
 from MathOperationDataModel import *
 from DecimalData import *
+from IntegerData import *
 
 class ModuloModel(NodeDataModel):
     def __init__(self):
-        super().__init__(self)
-    
+        super().__init__()
+        
+        self.modelValidationState = NodeValidationState.ERROR
+        self.modelValidationError = "Division by zero error"
+        
+        self._number1 = None
+        self._number2 = None
+        self._result = None
+        
     #--------------------------------------------------------------------------
     def __del__(self):
         pass
@@ -67,7 +75,7 @@ class ModuloModel(NodeDataModel):
     #--------------------------------------------------------------------------
     #override
     def dataType(self, portType:PortType,  portCaption:PortIndex):
-        return IntergerData().type()
+        return IntegerData().type()
         
     #--------------------------------------------------------------------------
     #override
@@ -76,8 +84,12 @@ class ModuloModel(NodeDataModel):
         
     #--------------------------------------------------------------------------
     #override
-    def setInData(self, nodeData:NodeData, portIndex:PortIndex):
-        numberData = IntergerData(nodeData)
+    def setInData(self, data:NodeData, portIndex:PortIndex):
+        
+        if(isinstance(data, NodeData) and not isinstance(data, DecimalData)):
+            numberData = None
+        elif(isinstance(data, DecimalData)):
+            numberData = data
         
         if(portIndex == 0):
             self._number1 = numberData
@@ -86,23 +98,23 @@ class ModuloModel(NodeDataModel):
         
         outPortIndex = 0
         
-        n1 = self._number1.lock()
-        n2 = self._number2.lock()
+        n1 = self._number1
+        n2 = self._number2
         
         if(n2 and (n2.number() == 0.0)):
-            self.modelValidationState = NodeValidationState.Error
+            self.modelValidationState = NodeValidationState.ERROR
             self.modelValidationError = "Division by zero error"
-            self._result.reset()
+            self._result = None
         elif(n1 and n2):
-            self.modelValidationState = NodeValidationState.Valid
+            self.modelValidationState = NodeValidationState.VALID
             self.modelValidationError = ""
             self._result = DecimalData(n1.number() % n2.number())
         else:
-            self.modelValidationState = NodeValidationState.Warning
+            self.modelValidationState = NodeValidationState.WARNING
             self.modelValidationError = "Missing or incorrect inputs"
-            self._result.reset()
+            self._result = None
         
-        dataUpdated.emit(outPortIndex)
+        self.dataUpdated.emit(self, outPortIndex)
             
     #--------------------------------------------------------------------------
     #override

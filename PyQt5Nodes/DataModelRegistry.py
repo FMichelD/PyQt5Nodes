@@ -72,8 +72,8 @@ class DataModelRegistry(object):
             converter.SourceType = converter.Model.dataType(PortType.In, 0)
             converter.DestinationType = converter.Model.dataType(PortType.Out, 0)
 
-            typeConverterKey = [converter.SourceType.id,
-                                 converter.DestinationType.id]
+            typeConverterKey = (converter.SourceType.id, 
+                                 converter.DestinationType.id)
 
             self._registeredTypeConverters[typeConverterKey] = converter
 
