@@ -43,7 +43,7 @@ class DataModelRegistry(object):
         return None
 
 #-----------------------------------------------------------------------------
-    def registerModel(self,  uniqueModel, category: str="Nodes"):
+    def registerModel(self,  uniqueModel=None, TypeConverter=False,  category="Nodes"):
         if(not isinstance(uniqueModel, NodeDataModel)):
             print("Must pass a subclass of NodeDataModel to registerModel")
 
@@ -54,7 +54,7 @@ class DataModelRegistry(object):
             self._categories.add(category)
             self._registeredModelsCategory[name] = category
 
-        if(isinstance(uniqueModel, bool) and uniqueModel == True):
+        if(TypeConverter):
             registeredModelRef = self._registeredModels[name]
 
             # Type converter node should have exactly one input and output
