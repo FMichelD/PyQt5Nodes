@@ -50,8 +50,11 @@ class NodeState(object):
     #-----------------------------------------------------------------------------
     def connections(self, portType: PortType, portIndex: PortIndex) -> dict:
         connections = self.getEntries(PortType)
-        return connections[portIndex]        
-
+        
+        if(any(connections)):
+            return connections[portIndex]        
+        else:
+            return {}
     #-----------------------------------------------------------------------------
     def setConnection(self, portType: PortType, portIndex: PortIndex,
                          connection: Connection):
