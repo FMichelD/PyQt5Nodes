@@ -134,7 +134,7 @@ class NodeDataModel(QObject, Serializable):
 
     dataUpdated = pyqtSignal(object, PortIndex)
 
-    dataInvalidated = pyqtSignal(PortIndex)
+    dataInvalidated = pyqtSignal(object, PortIndex)
 
     computingStarted = pyqtSignal()
 
