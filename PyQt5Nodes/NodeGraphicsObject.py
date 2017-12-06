@@ -250,7 +250,7 @@ class NodeGraphicsObject(QGraphicsObject):
 
             w = self._node.nodeDataModel().embeddedWidget()
 
-            if(w != 0):
+            if(w):
                 self.prepareGeometryChange()
 
                 oldSize = w.size()
@@ -259,8 +259,8 @@ class NodeGraphicsObject(QGraphicsObject):
 
                 w.setFixedSize(oldSize)
 
-                self._proxyWidget.setMinimunSize(oldSize)
-                self._proxyWidget.setMaxinumSize(oldSize)
+                self._proxyWidget.setMinimumSize(self, oldSize)
+                self._proxyWidget.setMaxinumSize(self, oldSize)
                 self._proxyWidget.setPos(geom.widgetPosition())
 
                 geom.recalculateSize()
