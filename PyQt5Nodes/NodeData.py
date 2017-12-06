@@ -20,10 +20,9 @@ class NodeData(object):
     
     @abstractmethod
     def sameType(self, nodeData) -> bool:
-
         return(self.type().id == nodeData.type().id)
 
     #-------------------------------------------------------------------------
     @abstractmethod
     def type(self):
-        return 0
+        pass
