@@ -145,7 +145,7 @@ class NodeGeometry(object):
         
         nodeStyle = StyleCollection.nodeStyle()
 
-        addon = 2 * nodeStyle.ConnectionPointDiameter
+        addon = 3 * nodeStyle.ConnectionPointDiameter
 
         return QRectF(0 - addon, 0 - addon,
                       self._width + 2*addon, self._height + 2*addon)
