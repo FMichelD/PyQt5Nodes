@@ -17,7 +17,7 @@ class NumberSourceDataModel(NodeDataModel):
     def __init__(self):
         super().__init__()
         
-        self._number = DecimalData()
+        self._number = None
         
         self._lineEdit = QLineEdit()
         self._lineEdit.setValidator(QDoubleValidator())
@@ -110,9 +110,8 @@ class NumberSourceDataModel(NodeDataModel):
     def onTextEdited(self, string:str):
         try:
             number = float(self._lineEdit.text())
-            self._number = DecimalData(number)
-            self.dataUpdated.emit(0, 0)
-        except ValueError as e:
-            dataInvalidated(0)
-            print(e)
+            self._number = DecimalData(num=number)
+            self.dataUpdated.emit(self, 0)
+        except ValueError as e:            
+            self.dataInvalidated.emit(self, 0)
         
