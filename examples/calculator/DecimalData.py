@@ -7,10 +7,13 @@ from PyQt5Nodes.NodeDataModel import *
 from PyQt5Nodes.NodeData import *
 
 class DecimalData(NodeData):
-    def __init__(self,  number:float=0.0):
+    def __init__(self, nodeData:NodeData=None,  num:float=0.0):
         super().__init__()
     
-        self._number = number
+        if(isinstance(nodeData, NodeData)):
+            self.__dict__ = nodeData.__dict__
+            
+        self._number = num
         
     #--------------------------------------------------------------------------
     #override
@@ -26,4 +29,4 @@ class DecimalData(NodeData):
     
     #--------------------------------------------------------------------------
     def numberAsText(self):
-        return '{:f}'.format(self._number.number())
+        return '{:f}'.format(self._number)
