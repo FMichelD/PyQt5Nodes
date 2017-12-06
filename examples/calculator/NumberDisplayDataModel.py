@@ -73,7 +73,11 @@ class NumberDisplayDataModel(NodeDataModel):
     #--------------------------------------------------------------------------
     #override
     def setInData(self, nodeData:NodeData, portIndex:PortIndex):
-        numberData = DecimalData(nodeData)
+        
+        if(not isinstance(nodeData, DecimalData)):
+            numberData = DecimalData(nodeData=nodeData)
+        else:
+            numberData = nodeData
         
         if(numberData):
             self.modelValidationState = NodeValidationState.VALID
