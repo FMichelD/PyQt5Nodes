@@ -10,10 +10,16 @@ class DecimalData(NodeData):
     def __init__(self, nodeData:NodeData=None,  num:float=0.0):
         super().__init__()
     
-        if(isinstance(nodeData, NodeData)):
+        #do cast form NodeData to DecimalData
+        if(isinstance(nodeData, NodeData) and not isinstance(nodeData, DecimalData)):
             self.__dict__ = nodeData.__dict__
-            
-        self._number = num
+            self._number = None
+        #do "cast" from DecimalData to DecimalData
+        elif(isinstance(nodeData, DecimalData)):
+            self._number = nodeData.number()
+        #creata a new DecimalData instance
+        else:            
+            self._number = num
         
     #--------------------------------------------------------------------------
     #override
@@ -29,4 +35,5 @@ class DecimalData(NodeData):
     
     #--------------------------------------------------------------------------
     def numberAsText(self):
-        return '{:f}'.format(self._number)
+        if(self._number is not None):
+            return '{:f}'.format(self._number)

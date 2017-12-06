@@ -53,10 +53,15 @@ class MathOperationDataModel(NodeDataModel):
     #--------------------------------------------------------------------------
     def setInData(self, data: NodeData,  portIndex: PortIndex):
         
+        if(isinstance(data, NodeData) and not isinstance(data, DecimalData)):
+            dataNumber = None
+        elif(isinstance(data, DecimalData)):
+            dataNumber = data
+        
         if(portIndex == 0):
-            self._number1 = data
+            self._number1 = dataNumber
         else:
-            self._number2 = data
+            self._number2 = dataNumber
             
         self.compute()
     

@@ -48,11 +48,11 @@ class AdditionModel(MathOperationDataModel):
         if(n1 and n2):
             self.modelValidationState = NodeValidationState.VALID
             self.modelValidationError = ""
-            self._result = DecimalData(n1.number() + n2.number())
+            self._result = DecimalData(num=(n1.number() + n2.number()))
         else:
             self.modelValidationState = NodeValidationState.WARNING
             self.modelValidationError = "Missing or incorrect inputs"
-#            self._result.reset()
+            self._result = None
             
         self.dataUpdated.emit(self, outPortIndex)
         

@@ -75,7 +75,7 @@ class NumberDisplayDataModel(NodeDataModel):
     def setInData(self, nodeData:NodeData, portIndex:PortIndex):
         
         if(not isinstance(nodeData, DecimalData)):
-            numberData = DecimalData(nodeData=nodeData)
+            numberData = None
         else:
             numberData = nodeData
         
