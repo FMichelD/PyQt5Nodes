@@ -33,12 +33,10 @@ class DataModelRegistry(object):
 
 #-----------------------------------------------------------------------------
     def getTypeConverter(self, sourceTypeId: str, destTypeId: str) -> NodeDataModel:
-        typeConverterKey = sourceTypeId
-        typeConverterValue = destTypeId
+        typeConverterKey = (sourceTypeId, destTypeId)
 
-        if(typeConverterKey in self._registeredTypeConverters and
-                typeConverterValue == self._registeredTypeConverters[typeConverterKey]):
-            return converter(typeConverterKey).Model.clone()
+        if(typeConverterKey in self._registeredTypeConverters):
+            return self._registeredTypeConverters[typeConverterKey].Model.clone()
 
         return None
 
