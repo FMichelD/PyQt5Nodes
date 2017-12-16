@@ -8,19 +8,25 @@ from abc import abstractmethod
 
 
 class NodeDataType(object):
-    id = ""
-    name = ""
+    def __init__(self):
+        super().__init__()
+        
+        self.id = ""
+        self.name = ""
 
 #-----------------------------------------------------------------------------
 class NodeData(object):
     
-    nodeDataType = NodeDataType()
-    id = nodeDataType.id
-    name = nodeDataType.id
+    def __init__(self):
+        super().__init__()
+        
+        self.nodeDataType = NodeDataType()
+        self.id = self.nodeDataType.id
+        self.name = self.nodeDataType.id
     
     @abstractmethod
     def sameType(self, nodeData) -> bool:
-        return(self.type().id == nodeData.type().id)
+        return(self.type().id == self.nodeData.type().id)
 
     #-------------------------------------------------------------------------
     @abstractmethod

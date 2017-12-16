@@ -328,23 +328,29 @@ class NodeGeometry(object):
         return self._boldFontMetrics.boundingRect(msg).width()
     
 #-----------------------------------------------------------------------------
-    def calculateNodePositionBetweenPorts(self, targetPortIndex: PortIndex,
-                        targetPort: PortType, targetNode,
-                        sourcePortIndex: PortIndex, sourceNode,
-                        sourcePort: PortType, newNode) -> QPointF:
+    def calculateNodePositionBetweenNodePorts(self, targetPortIndex: PortIndex,
+                        targetPort: PortType,
+                        targetNode,
+                        sourcePortIndex: PortIndex,
+                        sourcePort: PortType,
+                        sourceNode,                        
+                        newNode) -> QPointF:
 
-        # //Calculating the nodes position in the scene. It'll be positioned half way between the two ports that it "connects". 
-        # //The first line calculates the halfway point between the ports (node position + port position on the node for both nodes averaged).
-        # //The second line offsets this coordinate with the size of the new node, so that the new nodes center falls on the originally
+        # //Calculating the nodes position in the scene. It'll be positioned
+        #    half way between the two ports that it "connects". 
+        # //The first line calculates the halfway point between the ports
+        #    (node position + port position on the node for both nodes averaged).
+        # //The second line offsets this coordinate with the size of the new
+        #    node, so that the new nodes center falls on the originally
         # //calculated coordinate, instead of it's upper left corner
         converterNodePos = (sourceNode.nodeGraphicsObject().pos() + 
-    sourceNode.nodeGeometry().portScenePosition(sourcePortIndex, sourcePort) +
-    targetNode.nodeGraphicsObject().pos() +
-    targetNode.nodeGeometry().portScenePosition(targetPortIndex, targetPort)) / 2.0
+        sourceNode.nodeGeometry().portScenePosition(sourcePortIndex, sourcePort) +
+        targetNode.nodeGraphicsObject().pos() +
+        targetNode.nodeGeometry().portScenePosition(targetPortIndex, targetPort)) / 2.0
 
         converterNodePos.setX(converterNodePos.x() - newNode.nodeGeometry().width() / 2.0)
 
-        converterNodePos.setY(converterNodePos.y() - newNode.nodeGeometry.height() / 2.0)
+        converterNodePos.setY(converterNodePos.y() - newNode.nodeGeometry().height() / 2.0)
 
         return converterNodePos
 

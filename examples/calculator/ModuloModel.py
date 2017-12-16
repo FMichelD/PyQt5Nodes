@@ -12,17 +12,17 @@ from MathOperationDataModel import *
 from DecimalData import *
 from IntegerData import *
 
-class ModuloModel(NodeDataModel):
+class ModuloModel(MathOperationDataModel):
     def __init__(self):
         super().__init__()
         
-        self.modelValidationState = NodeValidationState.ERROR
-        self.modelValidationError = "Division by zero error"
+#        self.modelValidationState = NodeValidationState.ERROR
+#        self.modelValidationError = "Division by zero error"
         
-        self._number1 = None
-        self._number2 = None
-        self._result = None
-        
+#        self._number1 = None
+#        self._number2 = None
+#        self._result = None
+#        
     #--------------------------------------------------------------------------
     def __del__(self):
         pass
@@ -31,7 +31,7 @@ class ModuloModel(NodeDataModel):
     #override
     def caption(self):
         return "Modulo"
-    
+
     #--------------------------------------------------------------------------
     #override
     def portCaptionVisible(self, portType: PortType, portIndex: PortIndex):
@@ -62,40 +62,28 @@ class ModuloModel(NodeDataModel):
     
     #--------------------------------------------------------------------------
     #override
-    def nPorts(self, portType:PortType):
-        result = 1
-        
-        if(portType == PortType.In):
-            result = 2
-        elif(portType == PortType.Out):
-            result = 1
-            
-        return result
-        
-    #--------------------------------------------------------------------------
-    #override
     def dataType(self, portType:PortType,  portCaption:PortIndex):
         return IntegerData().type()
-        
-    #--------------------------------------------------------------------------
-    #override
-    def outData(self,  portIndex:PortIndex):
-        return self._result
-        
+    
     #--------------------------------------------------------------------------
     #override
     def setInData(self, data:NodeData, portIndex:PortIndex):
         
-        if(isinstance(data, NodeData) and not isinstance(data, DecimalData)):
+        if(isinstance(data, NodeData) and not isinstance(data, IntegerData)):
             numberData = None
-        elif(isinstance(data, DecimalData)):
+        elif(isinstance(data, IntegerData)):
             numberData = data
         
         if(portIndex == 0):
             self._number1 = numberData
         else:
             self._number2 = numberData
+    
+        self.compute()
         
+    #--------------------------------------------------------------------------
+    #override
+    def compute(self):
         outPortIndex = 0
         
         n1 = self._number1
@@ -108,26 +96,10 @@ class ModuloModel(NodeDataModel):
         elif(n1 and n2):
             self.modelValidationState = NodeValidationState.VALID
             self.modelValidationError = ""
-            self._result = DecimalData(n1.number() % n2.number())
+            self._result = IntegerData(num=(n1.number() % n2.number()))
         else:
             self.modelValidationState = NodeValidationState.WARNING
             self.modelValidationError = "Missing or incorrect inputs"
             self._result = None
         
         self.dataUpdated.emit(self, outPortIndex)
-            
-    #--------------------------------------------------------------------------
-    #override
-    def embeddedWidget(self):
-        return None
-    
-    #--------------------------------------------------------------------------
-    #override
-    def validationState(self):
-        return self.modelValidationState
-
-    #--------------------------------------------------------------------------
-    #override
-    def validationMessage(self):
-        return self.modelValidationError
-        

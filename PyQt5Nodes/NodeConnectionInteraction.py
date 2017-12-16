@@ -5,7 +5,7 @@ from PyQt5Nodes.Node import *
 from PyQt5Nodes.Connection import *
 from PyQt5Nodes.DataModelRegistry import *
 from PyQt5Nodes.NodeDataModel import *
-
+from PyQt5Nodes.NodeGeometry import *
 
 # /// Class performs various operations on the Node and Connection pair.
 # /// An instance should be created on the stack and destroyed when
@@ -63,23 +63,24 @@ class NodeConnectionInteraction(object):
 
             if(requiredPort == PortType.In):
 
-                converterModel = self._scene.registry().getTypeConverter(
+                typeConveterModel = self._scene.registry().getTypeConverter(
                                                 connectionDataType.id,
                                                 candidateNodeDataType.id)
-                if(converterModel is not None):
+                if(typeConveterModel):
                     canConnect = True
                     typeConversionNeeded = True
+                    
 
                     return (canConnect, portIndex, typeConversionNeeded, typeConveterModel)
                 else:
                     return (canConnect, portIndex, typeConversionNeeded, typeConveterModel)
 
 
-            converterModel = self._scene.registry().getTypeConverter(
+            typeConveterModel = self._scene.registry().getTypeConverter(
                                                 candidateNodeDataType.id,
                                                 connectionDataType.id)
 
-            if(converterModel is not None):
+            if(typeConveterModel):
                 canConnect = True
                 typeConversionNeeded = True
 
@@ -126,7 +127,7 @@ class NodeConnectionInteraction(object):
 
                 connectedPort = PortType.In
 
-            elif(requiredPort == PortType.Out):
+            elif(requiredPort == PortType.In):
 
                 connectedPort = PortType.Out
 
@@ -142,9 +143,9 @@ class NodeConnectionInteraction(object):
             converterNode = self._scene.createNode(typeConveterModel)
 
             # Calculate and set the converter node's position
-            converterNodePos = NodeGeometry.calculateNodePositionBetweenNodePorts(
+            converterNodePos = NodeGeometry.calculateNodePositionBetweenNodePorts(self, 
                             portIndex, requiredPort, self._node, outNodePortIndex,
-                            connectedPort, converterNode)
+                            connectedPort, outNode, converterNode)
 
             converterNode.nodeGraphicsObject().setPos(converterNodePos)
 

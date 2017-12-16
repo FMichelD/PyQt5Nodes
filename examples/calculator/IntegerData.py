@@ -7,18 +7,29 @@ from PyQt5Nodes.NodeDataModel import *
 from PyQt5Nodes.NodeData import *
 
 class IntegerData(NodeData):
-    def __init__(self,  number:float=0.0):
+    def __init__(self, nodeData:NodeData=None, num:float=0.0):
         super().__init__()
         
-        self._number = number
+         #do cast form NodeData to IntegerData
+        if(isinstance(nodeData, NodeData) and not isinstance(nodeData, IntegerData)):
+            self.__dict__ = nodeData.__dict__
+            self._number = None
+        #do "cast" from IntegerData to IntegerData
+        elif(isinstance(nodeData, IntegerData)):
+            self._number = nodeData.number()
+        #creata a new IntegerData instance
+        else:            
+            self._number = num
     
     #--------------------------------------------------------------------------
     #override
     def type(self):
-        NodeDataType.id = "integer"
-        NodeDataType.name = "Integer"
+        ndt = NodeDataType()
         
-        return NodeDataType
+        ndt.id = "integer"
+        ndt.name = "Integer"
+        
+        return ndt
     
     #--------------------------------------------------------------------------
     def number(self):

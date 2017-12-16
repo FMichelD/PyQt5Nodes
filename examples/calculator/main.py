@@ -15,6 +15,7 @@ from PyQt5Nodes.DataModelRegistry import *
 
 from NumberSourceDataModel import *
 from NumberDisplayDataModel import *
+from NumberDisplayDataModelInteger import *
 from AdditionModel import *
 from SubtractionModel import *
 from MultiplicationModel import *
@@ -31,7 +32,8 @@ def registerDataModels() -> DataModelRegistry:
 
     ret.registerModel(NumberSourceDataModel(), category="Source")
     ret.registerModel(NumberDisplayDataModel(), category="Display")
-
+    ret.registerModel(NumberDisplayDataModelInteger(), category="Display")
+    
     ret.registerModel(AdditionModel(), category="Operators")
     ret.registerModel(SubtractionModel(), category="Operators")
     ret.registerModel(MultiplicationModel(), category="Operators")
@@ -53,7 +55,7 @@ if __name__ == '__main__':
     view = FlowView(scene)
     view.setScene(scene)
     view.setWindowTitle("Node-based flow editor")
-    view.resize(800, 600)
+    view.resize(1066, 600)
 
     view.show()
 

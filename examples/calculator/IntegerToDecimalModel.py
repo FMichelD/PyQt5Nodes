@@ -23,7 +23,10 @@ class IntegerToDecimalModel(NodeDataModel):
     #override
     def caption(self):
         return "Integer to decimal"
-    
+
+    def setCaption(self, caption:str):
+        self._caption = caption
+        
     #--------------------------------------------------------------------------
     #override
     def captionVisible(self):
@@ -76,14 +79,22 @@ class IntegerToDecimalModel(NodeDataModel):
     #--------------------------------------------------------------------------
     #override
     def setInData(self, nodeData:NodeData, portIndex:PortIndex):
-        numberData = IntegerData(nodeData)
-        
+        if(isinstance(nodeData, NodeData) and not isinstance(nodeData, IntegerData)):
+            numberData = None
+        elif(isinstance(nodeData, IntegerData)):
+            numberData = nodeData
+#        else:
+#            numberData = None
+#            
         if(portIndex == 0):
             self._integer = numberData
             
         if(self._integer):
-            self._decimal = DecimalData(self._integer.number())
+            self._decimal = DecimalData(num=self._integer.number())
             
+        outPortIndex = 0
+        
+        self.dataUpdated.emit(self, outPortIndex)
     #--------------------------------------------------------------------------
     #override
     def embeddedWidget(self):

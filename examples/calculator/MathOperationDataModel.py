@@ -33,7 +33,6 @@ class MathOperationDataModel(NodeDataModel):
     
     #--------------------------------------------------------------------------
     def nPorts(self,  portType: PortType):
-        result = int()
         
         if(portType == PortType.In):
             result = 2

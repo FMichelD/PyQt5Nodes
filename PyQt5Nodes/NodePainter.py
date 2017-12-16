@@ -50,7 +50,7 @@ class NodePainter(object):
         painterDelegate = model.painterDelegate()
         if(painterDelegate):
             painterDelegate.painter(painter, geom, model)
-
+            
     #-------------------------------------------------------------------------      
     @staticmethod
     def drawNodeRect(painter: QPainter,
@@ -196,7 +196,7 @@ class NodePainter(object):
 
         if(not model.captionVisible()):
             return
-
+            
         name = model.caption()
 
         f = painter.font()

@@ -77,18 +77,21 @@ class DecimalToIntegerModel(NodeDataModel):
     
     #--------------------------------------------------------------------------
     #override
-    def setInData(self, data: NodeData, portIndex: PortIndex):
-        numberData = DecimalData(data)
+    def setInData(self, nodeData: NodeData, portIndex: PortIndex):
+        if(isinstance(nodeData, NodeData) and not isinstance(nodeData, DecimalData)):
+            numberData = None
+        elif(isinstance(nodeData, DecimalData)):
+            numberData = nodeData
         
         if(portIndex == 0):
             self._decimal = numberData
         
         if(self._decimal):
-            self._integer = IntegerData(self._decimal.number())
+            self._integer = IntegerData(num=self._decimal.number())
             
         outPortIndex = 0
         
-        dataUpdated.emit(outPortIndex)
+        self.dataUpdated.emit(self, outPortIndex)
     
     #--------------------------------------------------------------------------
     #override

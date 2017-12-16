@@ -10,9 +10,9 @@ from PyQt5Nodes.NodeData import *
 from PyQt5Nodes.NodeDataModel import *
 from PyQt5Nodes.PortType import *
 
-from DecimalData import *
+from IntegerData import *
 
-class NumberDisplayDataModel(NodeDataModel):
+class NumberDisplayDataModelInteger(NodeDataModel):
     def __init__(self):
         super().__init__()
         
@@ -33,12 +33,12 @@ class NumberDisplayDataModel(NodeDataModel):
     #--------------------------------------------------------------------------
     #override
     def name(self):
-        return "Result"
+        return "Integer Result"
     
     #--------------------------------------------------------------------------
     #override
     def clone(self):
-        return NumberDisplayDataModel()
+        return NumberDisplayDataModelInteger()
     
     #--------------------------------------------------------------------------
     #override
@@ -55,7 +55,7 @@ class NumberDisplayDataModel(NodeDataModel):
     #--------------------------------------------------------------------------
     #override
     def dataType(self, portType:PortType, portIndex:PortIndex):
-        return DecimalData().type()
+        return IntegerData().type()
         
     #--------------------------------------------------------------------------
 #    #override
@@ -67,7 +67,7 @@ class NumberDisplayDataModel(NodeDataModel):
     #override
     def setInData(self, nodeData:NodeData, portIndex:PortIndex):
         
-        if(not isinstance(nodeData, DecimalData)):
+        if(not isinstance(nodeData, IntegerData)):
             numberData = None
         else:
             numberData = nodeData
