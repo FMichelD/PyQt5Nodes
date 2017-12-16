@@ -49,19 +49,19 @@ class SubtractionModel(MathOperationDataModel):
     
     #--------------------------------------------------------------------------
     #override
-    def comput(self):
+    def compute(self):
         outPortIndex = 0
         
-        n1 = self._number1.lock()
-        n2 = self._number2.lock()
+        n1 = self._number1
+        n2 = self._number2
         
         if(n1 and n2):
-            self.modelValidationState = NodeValidationState.Valid
+            self.modelValidationState = NodeValidationState.VALID
             self.modelValidationError = ""
-            self._result = DecimalData(n1.number() - n2.number())
+            self._result = DecimalData(num=(n1.number() - n2.number()))
         else:
-            self.modelValidationState = NodeValidationState.Warning
+            self.modelValidationState = NodeValidationState.WARNING
             self.modelValidationError = "Missing or incorrect inputs"
-            self._result.reset()
-        
-        dataUpdated.emit(outPortIndex)
+            self._result = None
+            
+        self.dataUpdated.emit(self, outPortIndex)
