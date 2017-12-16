@@ -53,17 +53,17 @@ class Connection(QObject, Serializable):
         self.setRequiredPort(oppositePort(portType))
 
     #-------------------------------------------------------------------------
-    def connectionNodes(self, nodeIn, PortIndexIn, nodeOut, portIndexOut):
+    def connectionNodes(self, nodeIn, portIndexIn, nodeOut, portIndexOut):
         self._id = QUuid.createUuid()
 
-        self._outNode = Node(nodeOut)
-        self._inNode = Node(nodeIn)
+        self._outNode = (nodeOut)
+        self._inNode = (nodeIn)
         self._outPortIndex = portIndexOut
         self._inPortIndex = portIndexIn
         self._connectionState = ConnectionState()
 
-        self.setNodeToPort(nodeIn, portType.In, portIndexIn)
-        self.setNodeToPort(nodeOut, portType.Out, portIndexOut)
+        self.setNodeToPort(nodeIn, PortType.In, portIndexIn)
+        self.setNodeToPort(nodeOut, PortType.Out, portIndexOut)
 
     #-------------------------------------------------------------------------
     def __del__(self):
