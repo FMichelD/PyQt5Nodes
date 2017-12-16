@@ -67,7 +67,7 @@ class FlowScene(QGraphicsScene):
 
         connection = Connection(nodeIn, portIndexIn, nodeOut, portIndexOut)
 
-        cgo = ConnectionGraphicsObject(connection)
+        cgo = ConnectionGraphicsObject(self, connection)
 
         nodeIn.nodeState().setConnection(PortType.In, portIndexIn, connection)
         nodeOut.nodeState().setConnection(PortType.Out, portIndexOut, connection)
