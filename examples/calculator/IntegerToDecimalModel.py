@@ -83,9 +83,9 @@ class IntegerToDecimalModel(NodeDataModel):
             numberData = None
         elif(isinstance(nodeData, IntegerData)):
             numberData = nodeData
-#        else:
-#            numberData = None
-#            
+        else:
+            numberData = None
+            
         if(portIndex == 0):
             self._integer = numberData
             
