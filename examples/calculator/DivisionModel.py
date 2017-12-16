@@ -49,23 +49,40 @@ class DivisionModel(MathOperationDataModel):
     
     #--------------------------------------------------------------------------
     #override
-    def comput(self):
+    def compute(self):
         outPortIndex = 0
         
-        n1 = self._number1.lock()
-        n2 = self._number2.lock()
+        n1 = self._number1
+        n2 = self._number2
         
         if(n2 and (n2.number() == 0.0)):
-            self.modelValidationState = NodeValidationState.Error
+            self.modelValidationState = NodeValidationState.ERROR
             self.modelValidationError = "Division by zero error"
-            self._result.reset()
+            self._result = None
         elif(n1 and n2):
-            self.modelValidationState = NodeValidationState.Valid
+            self.modelValidationState = NodeValidationState.VALID
             self.modelValidationError = ""
-            self._result = DecimalData(n1.number() / n2.number())
+            self._result = DecimalData(num=(n1.number() / n2.number()))
         else:
-            self.modelValidationState = NodeValidationState.Warning
+            self.modelValidationState = NodeValidationState.WARNING
             self.modelValidationError = "Missing or incorrect inputs"
-            self._result.reset()
+            self._result = None
         
-        dataUpdated.emit(outPortIndex)
+        self.dataUpdated.emit(self, outPortIndex)
+
+
+#        outPortIndex = 0
+#        
+#        n1 = self._number1
+#        n2 = self._number2
+#        
+#        if(n1 and n2):
+#            self.modelValidationState = NodeValidationState.VALID
+#            self.modelValidationError = ""
+#            self._result = DecimalData(num=(n1.number() + n2.number()))
+#        else:
+#            self.modelValidationState = NodeValidationState.WARNING
+#            self.modelValidationError = "Missing or incorrect inputs"
+#            self._result = None
+#            
+#        self.dataUpdated.emit(self, outPortIndex)
