@@ -36,19 +36,19 @@ class MultiplicationModel(MathOperationDataModel):
     
     #--------------------------------------------------------------------------
     #override
-    def comput(self):
+    def compute(self):
         outPortIndex = 0
         
-        n1 = self._number1.lock()
-        n2 = self._number2.lock()
-
-        if(n1 and n2):
-            self.modelValidationState = NodeValidationState.Valid
-            self.modelValidationError = ""
-            self._result = DecimalData(n1.number() * n2.number())
-        else:
-            self.modelValidationState = NodeValidationState.Warning
-            self.modelValidationError = "Missing or incorrect inputs"
-            self._result.reset()
+        n1 = self._number1
+        n2 = self._number2
         
-        dataUpdated.emit(outPortIndex)
+        if(n1 and n2):
+            self.modelValidationState = NodeValidationState.VALID
+            self.modelValidationError = ""
+            self._result = DecimalData(num=(n1.number() * n2.number()))
+        else:
+            self.modelValidationState = NodeValidationState.WARNING
+            self.modelValidationError = "Missing or incorrect inputs"
+            self._result = None
+            
+        self.dataUpdated.emit(self, outPortIndex)
